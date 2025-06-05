@@ -24,49 +24,6 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  apps/docs:
-    dependencies:
-      '@workspace/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      lucide-react:
-        specifier: ^0.475.0
-        version: 0.475.0(react@19.1.0)
-      next:
-        specifier: 15.2.4
-        version: 15.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      react:
-        specifier: ^19.0.0
-        version: 19.1.0
-      react-dom:
-        specifier: ^19.0.0
-        version: 19.1.0(react@19.1.0)
-    devDependencies:
-      '@tailwindcss/postcss':
-        specifier: ^4
-        version: 4.1.2
-      '@types/node':
-        specifier: ^20
-        version: 20.17.30
-      '@types/react':
-        specifier: ^19
-        version: 19.1.0
-      '@types/react-dom':
-        specifier: ^19
-        version: 19.1.1(@types/react@19.1.0)
-      '@workspace/eslint-config':
-        specifier: workspace:^
-        version: link:../../packages/eslint-config
-      '@workspace/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
-      tailwindcss:
-        specifier: ^4
-        version: 4.1.2
-      typescript:
-        specifier: ^5
-        version: 5.7.3
-
   apps/web:
     dependencies:
       '@hookform/resolvers':
@@ -157,9 +114,6 @@ importers:
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
-      drizzle-orm:
-        specifier: ^0.41.0
-        version: 0.41.0(@types/pg@8.11.11)(gel@2.0.1)(kysely@0.27.6)(pg@8.14.1)
       superjson:
         specifier: ^2.2.2
         version: 2.2.2

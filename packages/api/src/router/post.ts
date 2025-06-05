@@ -6,8 +6,7 @@ import {
   post,
   updatePostBuildSchema,
 } from "@workspace/db/schema"
-import { db } from "@workspace/db"
-import { and, desc, eq } from "drizzle-orm"
+import { and, db, desc, eq } from "@workspace/db"
 
 export const postRouter = {
   hello: publicProcedure

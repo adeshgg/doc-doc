@@ -5,6 +5,7 @@
     "composite": true, // <--- Add this
     "outDir": "./dist", // This was "dist"
     "rootDir": "./src", // <--- Add this for clarity
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
       "@workspace/db/*": ["./src/*"] // For internal paths within this package

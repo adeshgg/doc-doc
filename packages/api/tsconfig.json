@@ -5,6 +5,7 @@
     "composite": true, // <--- Add this
     "outDir": "./dist",
     "rootDir": "./src",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
       "@workspace/api/*": ["./src/*"] // For internal paths, this is fine
