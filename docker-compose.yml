@@ -1,15 +1,15 @@
 services:
   db:
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16 # Changed to an image with pgvector
     restart: always
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mypassword
     ports:
-      - "5432:5432" # Maps host port 5432 to container port 5432
+      - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data # This is where data persistence happens
+      - pgdata:/var/lib/postgresql/data
 
 volumes:
-  pgdata: # Defines a named volume
+  pgdata:

@@ -15,6 +15,13 @@
       "when": 1743630599251,
       "tag": "0001_cute_scorpion",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1749108450824,
+      "tag": "0002_odd_vulcan",
+      "breakpoints": true
     }
   ]
 }
