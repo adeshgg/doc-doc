@@ -1,23 +1,36 @@
 import { file, insertFileBuildSchema } from "@workspace/db/schema"
 import { privateProcedure } from "../trpc"
 import { db } from "@workspace/db"
+import { z } from "zod"
 
 export const fileRouter = {
   uploadFile: privateProcedure
-    .input(insertFileBuildSchema)
+    .input(
+      z.object({
+        url: z.string().url(),
+        pathname: z.string(),
+        name: z.string(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
-      const { userId, user } = ctx
+      const { userId } = ctx
 
-      // put to the blob and success create the file db entry
-      //  file path should be user.email/filename
-      const createFile = await db
+      console.log("Adding file to DB:", input)
+
+      const newFile = await db
         .insert(file)
         .values({
-          url: input.url,
+          // url: input.url,
+          // pathname: input.pathname,
+          // ownerId: userId,
           ownerId: userId,
+          url: input.url,
+          path: input.pathname,
+          name: input.name,
+          // You could add other fields from the input here if your schema supports it
         })
         .returning()
 
-      return createFile
+      return newFile[0]
     }),
 }

@@ -11,7 +11,7 @@ const Dashboard = async () => {
     <div>
       <div>Hi {session?.user.name}</div>
       <div>Your Email was: {session?.user.email}</div>
-      <FileUploadDemo />
+      <FileUploadDemo userEmail={session?.user.email} />
     </div>
   )
 }

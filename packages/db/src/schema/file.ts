@@ -7,6 +7,8 @@ import { createInsertSchema } from "drizzle-zod"
 export const file = pgTable("file", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   url: text("url").notNull(),
+  name: text("name").notNull(),
+  path: text("path").notNull(),
   ownerId: text("owner_id").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")

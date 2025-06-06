@@ -1,7 +1,11 @@
+// /components/FileUploadDemo.tsx
+
 "use client"
 
 import { useTRPC } from "@/trpc/react"
 import { useMutation } from "@tanstack/react-query"
+import { upload } from "@vercel/blob/client"
+// import { useSession } from "next-auth/react"; // To get user email for the pathname
 import { Button } from "@workspace/ui/components/button"
 import {
   FileUpload,
@@ -12,58 +16,102 @@ import {
   FileUploadItemPreview,
   FileUploadList,
   FileUploadTrigger,
+  // ... other ui imports
 } from "@workspace/ui/components/file-upload"
-import { Upload, UploadCloud, X } from "lucide-react"
+import { UploadCloud, X } from "lucide-react"
 import * as React from "react"
 import { toast } from "sonner"
 
-export function FileUploadDemo() {
-  const trpc = useTRPC()
-  const { mutate, isPending } = useMutation(
-    trpc.file.uploadFile.mutationOptions()
-  )
-
+export function FileUploadDemo({
+  userEmail,
+}: {
+  userEmail: string | undefined
+}) {
   const [files, setFiles] = React.useState<File[]>([])
+  // const { data: session } = useSession(); // Get user session
+  const trpc = useTRPC()
 
+  // tRPC mutation to save the file record to our database
+  const { mutate: saveFile, isPending: isSaving } = useMutation({
+    ...trpc.file.uploadFile.mutationOptions({
+      onSuccess: () => {
+        toast.success("File saved to your account.")
+        setFiles([]) // Clear the file list on success
+      },
+      onError: error => {
+        toast.error("Failed to save file.", { description: error.message })
+      },
+    }),
+  })
+
+  // State to track the blob upload progress
+  const [isUploading, setIsUploading] = React.useState(false)
+
+  // ... onFileReject callback remains the same ...
   const onFileReject = React.useCallback((file: File, message: string) => {
     toast(message, {
       description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
     })
   }, [])
 
-  function handleUpload() {
-    console.log("files", files)
-    if (files.length > 0) {
-      mutate({
-        file: files[0]!,
+  async function handleUpload() {
+    const file = files[0]
+    if (!file || !userEmail) {
+      toast.error("No file selected or you are not logged in.")
+      return
+    }
+
+    setIsUploading(true)
+
+    try {
+      // The pathname must be constructed on the client
+      // It will be validated on the server in `onBeforeGenerateToken`
+      const pathname = `${userEmail}/${file.name}`
+
+      const newBlob = await upload(pathname, file, {
+        access: "public",
+        handleUploadUrl: "/api/blob/upload", // The new API route
       })
+
+      // Once blob upload is complete, call our tRPC mutation
+      // saveFile({
+      //   // url: newBlob.url,
+      //   // pathname: newBlob.pathname,
+      //   // contentType: newBlob.contentType,
+      //   // contentDisposition: newBlob.contentDisposition,
+      //   // size: file.size,
+      //   // file:
+      // });
+      saveFile({
+        url: newBlob.url,
+        pathname: newBlob.pathname,
+        name: file.name,
+      })
+    } catch (error) {
+      toast.error("Upload failed.", { description: (error as Error).message })
+    } finally {
+      setIsUploading(false)
     }
   }
+
+  const isPending = isUploading || isSaving
 
   return (
     <div>
       <FileUpload
         maxFiles={1}
-        maxSize={2 * 1024 * 1024}
+        maxSize={4 * 1024 * 1024} // 4MB
         className="w-full max-w-md"
         value={files}
         onValueChange={setFiles}
         onFileReject={onFileReject}
-        //   multiple
+        disabled={isPending}
+        accept="application/pdf, image/*"
       >
-        <FileUploadDropzone className="p-0 w-fit border-none">
-          {/* <div className="flex flex-col items-center gap-1 text-center">
-          <div className="flex items-center justify-center rounded-full border p-2.5">
-            <Upload className="size-6 text-muted-foreground" />
-          </div>
-          <p className="font-medium text-sm">Drag & drop files here</p>
-          <p className="text-muted-foreground text-xs">
-            Or click to browse (max 2 files, up to 5MB each)
-          </p>
-        </div> */}
+        <FileUploadDropzone className="p-0 border-none w-fit">
           <FileUploadTrigger asChild>
-            <Button variant="outline" size="sm" className="mt-2 w-fit">
-              Browse files
+            <Button variant="outline" size="sm" disabled={isPending}>
+              Browse file
             </Button>
           </FileUploadTrigger>
         </FileUploadDropzone>
@@ -81,15 +129,25 @@ export function FileUploadDemo() {
           ))}
         </FileUploadList>
       </FileUpload>
-      {/* Upload files */}
+
       {files.length > 0 && (
         <Button
           onClick={handleUpload}
           size={"sm"}
           variant={"outline"}
           className="mt-4"
+          disabled={isPending}
         >
-          <UploadCloud /> Upload
+          {isUploading ? (
+            "Uploading to storage..."
+          ) : isSaving ? (
+            "Saving file..."
+          ) : (
+            <>
+              {" "}
+              <UploadCloud className="mr-2 h-4 w-4" /> Upload File{" "}
+            </>
+          )}
         </Button>
       )}
     </div>
