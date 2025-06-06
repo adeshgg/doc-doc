@@ -2,6 +2,7 @@ import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
 import { user } from "./user"
 import { relations } from "drizzle-orm"
 import { chunk } from "./chat"
+import { createInsertSchema } from "drizzle-zod"
 
 export const file = pgTable("file", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
@@ -21,4 +22,9 @@ export const fileRelations = relations(file, ({ one, many }) => ({
   chunks: many(chunk),
 }))
 
-// TODO : Export schema
+export const insertFileBuildSchema = createInsertSchema(file).omit({
+  id: true,
+  ownerId: true,
+  createdAt: true,
+  updatedAt: true,
+})
