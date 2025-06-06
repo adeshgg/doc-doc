@@ -36,6 +36,20 @@
       "when": 1749216059201,
       "tag": "0004_perfect_blockbuster",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1749236914406,
+      "tag": "0005_sharp_adam_warlock",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1749239884015,
+      "tag": "0006_nervous_scarlet_witch",
+      "breakpoints": true
     }
   ]
 }

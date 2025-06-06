@@ -2,7 +2,6 @@ import { handleUpload, type HandleUploadBody } from "@vercel/blob/client"
 import { NextResponse } from "next/server"
 import { auth } from "@workspace/api/auth"
 import { headers } from "next/headers"
-// import { auth } from "@workspace/auth"; // Assuming you use next-auth
 
 export async function POST(request: Request): Promise<NextResponse> {
   const session = await auth.api.getSession({
@@ -31,7 +30,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
         return {
           // You can add additional metadata to the blob here
-          allowedContentTypes: ["image/jpeg", "image/png", "application/pdf"],
+          allowedContentTypes: ["image/*", "application/pdf"],
           tokenPayload: JSON.stringify({
             userId: session.user.id, // Pass user ID to the completion callback
           }),

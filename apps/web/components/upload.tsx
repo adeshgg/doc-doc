@@ -28,10 +28,8 @@ export function FileUploadDemo({
   userEmail: string | undefined
 }) {
   const [files, setFiles] = React.useState<File[]>([])
-  // const { data: session } = useSession(); // Get user session
   const trpc = useTRPC()
 
-  // tRPC mutation to save the file record to our database
   const { mutate: saveFile, isPending: isSaving } = useMutation({
     ...trpc.file.uploadFile.mutationOptions({
       onSuccess: () => {
@@ -70,18 +68,9 @@ export function FileUploadDemo({
 
       const newBlob = await upload(pathname, file, {
         access: "public",
-        handleUploadUrl: "/api/blob/upload", // The new API route
+        handleUploadUrl: "/api/blob/upload",
       })
 
-      // Once blob upload is complete, call our tRPC mutation
-      // saveFile({
-      //   // url: newBlob.url,
-      //   // pathname: newBlob.pathname,
-      //   // contentType: newBlob.contentType,
-      //   // contentDisposition: newBlob.contentDisposition,
-      //   // size: file.size,
-      //   // file:
-      // });
       saveFile({
         url: newBlob.url,
         pathname: newBlob.pathname,

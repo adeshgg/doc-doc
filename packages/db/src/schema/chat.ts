@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm/pg-core"
 import { user } from "./user"
 import { file } from "./file"
+import { createInsertSchema } from "drizzle-zod"
 
 export const chat = pgTable("chat", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
@@ -31,11 +32,11 @@ export const chatRelations = relations(chat, ({ one }) => ({
 export const chunk = pgTable(
   "chunk",
   {
-    id: uuid("id").notNull().primaryKey().defaultRandom(),
+    id: text("id").notNull().primaryKey(),
     fileId: text("file_id").notNull(),
     content: text("content").notNull(),
     //   embedding: real("embedding").array().notNull(),
-    embedding: vector("embedding", { dimensions: 1536 }).notNull(),
+    embedding: vector("embedding", { dimensions: 768 }).notNull(),
   },
   table => [
     index("embeddingIndex").using(
@@ -52,4 +53,4 @@ export const chunkRelations = relations(chunk, ({ one }) => ({
   }),
 }))
 
-// TODO : Export schema
+export const insertChunkBuildSchema = createInsertSchema(chunk)
