@@ -17,6 +17,7 @@
     "@trpc/client": "^11.0.1",
     "@trpc/server": "^11.0.1",
     "@trpc/tanstack-react-query": "^11.0.1",
+    "@vercel/blob": "^1.1.1",
     "@workspace/api": "workspace:*",
     "@workspace/db": "workspace:*",
     "@workspace/ui": "workspace:*",

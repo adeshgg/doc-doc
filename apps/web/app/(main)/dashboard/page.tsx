@@ -1,3 +1,4 @@
+import { FileUploadDemo } from "@/components/upload"
 import { auth } from "@workspace/api/auth"
 import { headers } from "next/headers"
 
@@ -10,6 +11,7 @@ const Dashboard = async () => {
     <div>
       <div>Hi {session?.user.name}</div>
       <div>Your Email was: {session?.user.email}</div>
+      <FileUploadDemo />
     </div>
   )
 }
