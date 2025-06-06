@@ -9,6 +9,7 @@ import {
   vector,
 } from "drizzle-orm/pg-core"
 import { user } from "./user"
+import { file } from "./file"
 
 export const chat = pgTable("chat", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
@@ -31,7 +32,7 @@ export const chunk = pgTable(
   "chunk",
   {
     id: uuid("id").notNull().primaryKey().defaultRandom(),
-    filePath: text("filePath").notNull(),
+    fileId: text("file_id").notNull(),
     content: text("content").notNull(),
     //   embedding: real("embedding").array().notNull(),
     embedding: vector("embedding", { dimensions: 1536 }).notNull(),
@@ -43,5 +44,12 @@ export const chunk = pgTable(
     ),
   ]
 )
+
+export const chunkRelations = relations(chunk, ({ one }) => ({
+  file: one(file, {
+    fields: [chunk.fileId],
+    references: [file.id],
+  }),
+}))
 
 // TODO : Export schema
