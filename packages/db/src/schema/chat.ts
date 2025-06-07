@@ -15,7 +15,9 @@ import { createInsertSchema } from "drizzle-zod"
 export const chat = pgTable("chat", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   messages: json("messages").notNull(),
-  authorId: text("author_id").notNull(),
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
@@ -33,7 +35,9 @@ export const chunk = pgTable(
   "chunk",
   {
     id: text("id").notNull().primaryKey(),
-    fileId: text("file_id").notNull(),
+    fileId: uuid("file_id")
+      .notNull()
+      .references(() => file.id, { onDelete: "cascade" }),
     content: text("content").notNull(),
     //   embedding: real("embedding").array().notNull(),
     embedding: vector("embedding", { dimensions: 768 }).notNull(),

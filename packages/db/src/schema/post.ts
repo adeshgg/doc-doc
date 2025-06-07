@@ -11,7 +11,9 @@ export const post = pgTable("post", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   title: text("context").notNull(),
   description: text("description").notNull(),
-  authorId: text("author_id").notNull(),
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()

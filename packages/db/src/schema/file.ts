@@ -9,7 +9,9 @@ export const file = pgTable("file", {
   url: text("url").notNull(),
   name: text("name").notNull(),
   path: text("path").notNull(),
-  ownerId: text("owner_id").notNull(),
+  ownerId: text("owner_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()

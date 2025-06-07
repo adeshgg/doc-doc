@@ -1,0 +1,1 @@
+ALTER TABLE "chunk" ALTER COLUMN "file_id" SET DATA TYPE uuid USING "file_id"::uuid;
