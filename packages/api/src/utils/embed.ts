@@ -1,8 +1,9 @@
 import { google } from "@ai-sdk/google"
 import { generateText, LanguageModelV1 } from "ai"
-// import pdf from "pdf-parse"
-// import * as pdfjs from "pdfjs-dist/legacy/build/pdf.js"
 import { PdfReader } from "pdfreader"
+
+// A small helper function for waiting
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 const systemPrompt =
   `Extract the text out of this image` +
@@ -10,120 +11,136 @@ const systemPrompt =
   `Format the result a readable text` +
   `Just return the extracted text, no extra message`
 
+// export async function getImageTextFromUrlUsingLLM(url: string) {
+//   console.log("url", url)
+//   const imageUrl = url.split("?")[0]
+//   console.log(imageUrl)
+//   const { text } = await generateText({
+//     model: google("gemini-2.0-flash-001", {
+//       structuredOutputs: true,
+//     }) as LanguageModelV1,
+//     system: systemPrompt,
+//     messages: [
+//       {
+//         role: "user",
+//         content: [
+//           {
+//             type: "image",
+//             image: new URL(imageUrl!),
+//           },
+//         ],
+//       },
+//     ],
+//   })
+
+//   console.log(text)
+
+//   return text
+// }
+
+// Later when implementing async worker add re-tries there instead
+
+/**
+ * Gets text from an image URL using a Google Gemini model,
+ * with a retry mechanism to handle transient errors like 404s from Vercel Blob.
+ *
+ * @param url The public URL of the image file.
+ * @param systemPrompt The system prompt to guide the LLM.
+ * @returns The extracted text from the image.
+ */
 export async function getImageTextFromUrlUsingLLM(url: string) {
-  console.log("url", url)
-  const imageUrl = url.split("?")[0]
-  console.log(imageUrl)
-  const { text } = await generateText({
-    model: google("gemini-2.0-flash-001", {
-      structuredOutputs: true,
-    }) as LanguageModelV1,
-    system: systemPrompt,
-    messages: [
-      {
-        role: "user",
-        content: [
+  let lastError: Error | null = null
+  const maxRetries = 10 // Total attempts
+  const initialDelay = 1500 // Start with a 1.5-second delay
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      console.log(`[Attempt ${i + 1}] Processing image URL:`, url)
+      // It's good practice to remove query params if they are not needed by the final URL
+      const imageUrl = url.split("?")[0]
+
+      // The entire generateText call is retried because the fetch happens inside it.
+      const { text } = await generateText({
+        model: google("gemini-1.5-flash-latest") as LanguageModelV1,
+        system: systemPrompt,
+        messages: [
           {
-            type: "image",
-            image: new URL(imageUrl!),
+            role: "user",
+            content: [
+              {
+                type: "image",
+                image: new URL(imageUrl!),
+              },
+            ],
           },
         ],
-      },
-    ],
-  })
+      })
 
-  console.log(text)
+      console.log("Successfully extracted text from image.")
+      // On success, return the text and exit the loop.
+      return text
+    } catch (error) {
+      lastError = error as Error
+      console.error(`Attempt ${i + 1} failed: ${lastError.message}`)
 
-  return text
+      // Don't wait after the final attempt
+      if (i < maxRetries - 1) {
+        const waitTime = initialDelay * (i + 1) // Increase delay for subsequent retries
+        console.log(`Retrying in ${waitTime / 1000}s...`)
+        await delay(waitTime)
+      }
+    }
+  }
+
+  // If all retries failed, throw a final, informative error.
+  throw new Error(
+    `Failed to process image after ${maxRetries} attempts. Last error: ${lastError?.message}`
+  )
 }
-
-// export async function getPdfContentFromUrl(url: string): Promise<string> {
-//   const response = await fetch(url)
-//   const arrayBuffer = await response.arrayBuffer()
-//   const buffer = Buffer.from(arrayBuffer)
-//   const data = await pdf(buffer)
-//   return data.text
-// }
-
-// export async function getPdfContentFromUrl(url: string): Promise<string> {
-//   const response = await fetch(url)
-
-//   if (!response.ok) {
-//     throw new Error(`Failed to fetch PDF from ${url}: ${response.statusText}`)
-//   }
-
-//   const arrayBuffer = await response.arrayBuffer()
-//   const buffer = Buffer.from(arrayBuffer)
-
-//   // THE NEW FIX:
-//   // Provide a minimal, safe option to prevent the library from
-//   // entering its internal test mode.
-//   const options = {
-//     max: 0, // 0 means no page limit
-//   }
-
-//   const data = await pdf(buffer, options)
-//   return data.text
-// }
-
-// Add the dependency: npm install pdfreader
 
 export async function getPdfContentFromUrl(url: string): Promise<string> {
-  //   Need to solve this
-  //   and add on delete cascase, so that on file delete chunks get deleted as well
-  //   remove other pdf parsers,
-  // use langchain to read pdf is possible
-  console.log("url", url)
-  const response = await fetch(url)
-  if (!response.ok) {
-    throw new Error(`Failed to fetch PDF: ${response.statusText}`)
-  }
-  const buffer = Buffer.from(await response.arrayBuffer())
+  let lastError: Error | null = null
+  const maxRetries = 10 // Try a total of 10 times
+  const initialDelay = 1000 // Start with a 1000ms delay
 
-  return new Promise((resolve, reject) => {
-    let allText = ""
-    // The reader processes items one by one
-    new PdfReader(null).parseBuffer(buffer, (err, item) => {
-      if (err) {
-        // Handle parsing errors
-        reject(err)
-      } else if (!item) {
-        // End of buffer has been reached
-        resolve(allText.trim())
-      } else if (item.text) {
-        // Append text items
-        allText += item.text + " "
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      console.log(`[Attempt ${i + 1}] Fetching URL:`, url)
+      const response = await fetch(url)
+
+      if (!response.ok) {
+        // If it's a 404, we want to retry. For other errors, we might want to fail faster.
+        if (response.status === 404) {
+          throw new Error(`Failed to fetch PDF: Not Found (status 404)`)
+        }
+        // For other server errors, throw a different message
+        throw new Error(
+          `Failed to fetch PDF: ${response.statusText} (status ${response.status})`
+        )
       }
-    })
-  })
+
+      const buffer = Buffer.from(await response.arrayBuffer())
+
+      return new Promise((resolve, reject) => {
+        let allText = ""
+        new PdfReader(null).parseBuffer(buffer, (err, item) => {
+          if (err) reject(err)
+          else if (!item) resolve(allText.trim())
+          else if (item.text) allText += item.text + " "
+        })
+      })
+    } catch (error) {
+      lastError = error as Error
+      console.log(
+        `Attempt ${i + 1} failed. Retrying in ${initialDelay * (i + 1)}ms...`
+      )
+      // Wait before the next attempt, with increasing delay (exponential backoff)
+      await delay(initialDelay * (i + 1))
+    }
+  }
+
+  // If all retries fail, throw the last error we captured
+  throw new Error(
+    `Failed to fetch PDF after ${maxRetries} attempts. Last error: ${lastError?.message}`
+  )
 }
-
-// You might need to add this dependency: npm install pdfjs-dist
-
-// This line is a workaround to prevent pdf.js from loading a "worker" file,
-// which isn't needed for server-side text extraction.
-// pdfjs.GlobalWorkerOptions.workerSrc = "pdf.worker.js"
-
-// export async function getPdfContentFromUrl(url: string): Promise<string> {
-//   const response = await fetch(url)
-//   if (!response.ok) {
-//     throw new Error(`Failed to fetch PDF: ${response.statusText}`)
-//   }
-//   const arrayBuffer = await response.arrayBuffer()
-
-//   // Load the PDF from the buffer
-//   const loadingTask = pdfjs.getDocument({ data: arrayBuffer })
-//   const pdf = await loadingTask.promise
-
-//   const allText = []
-//   for (let i = 1; i <= pdf.numPages; i++) {
-//     const page = await pdf.getPage(i)
-//     const textContent = await page.getTextContent()
-//     const pageText = textContent.items
-//       .map(item => ("str" in item ? item.str : ""))
-//       .join(" ")
-//     allText.push(pageText)
-//   }
-
-//   return allText.join("\n\n")
-// }
