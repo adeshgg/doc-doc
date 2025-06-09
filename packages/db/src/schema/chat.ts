@@ -58,3 +58,6 @@ export const chunkRelations = relations(chunk, ({ one }) => ({
 }))
 
 export const insertChunkBuildSchema = createInsertSchema(chunk)
+export const addChatBuildSchema = createInsertSchema(chat).omit({
+  authorId: true,
+})
