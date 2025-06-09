@@ -1,6 +1,7 @@
 import { addChatBuildSchema, chat } from "@workspace/db/schema"
 import { privateProcedure } from "../trpc"
 import { db, eq } from "@workspace/db"
+import { z } from "zod"
 
 export const chatRouter = {
   addChat: privateProcedure
@@ -23,5 +24,18 @@ export const chatRouter = {
         authorId: ctx.userId,
         messages: JSON.stringify(messages),
       })
+    }),
+  getChatById: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const [selectedChat] = await db
+        .select()
+        .from(chat)
+        .where(eq(chat.id, input.id))
+      return selectedChat
     }),
 }

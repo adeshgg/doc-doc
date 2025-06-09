@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       console.log("final response from LLM", text)
       await caller.chat.addChat({
         id,
-        messages: [...messages, { role: "assistant", context: text }],
+        messages: [...messages, { role: "assistant", content: text }],
       })
     },
   })
