@@ -13,7 +13,7 @@ import { file } from "./file"
 import { createInsertSchema } from "drizzle-zod"
 
 export const chat = pgTable("chat", {
-  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  id: text("id").notNull().primaryKey(),
   messages: json("messages").notNull(),
   authorId: text("author_id")
     .notNull()
