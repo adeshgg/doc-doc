@@ -30,7 +30,7 @@ export function Chat({
   session: Session | null
 }) {
   const { messages, handleSubmit, input, setInput, append } = useChat({
-    body: { id },
+    body: { id, allFiles: true },
     initialMessages,
     onFinish: () => {
       window.history.replaceState({}, "", `/chat/${id}`)

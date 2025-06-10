@@ -41,6 +41,9 @@ export const chunk = pgTable(
     content: text("content").notNull(),
     //   embedding: real("embedding").array().notNull(),
     embedding: vector("embedding", { dimensions: 768 }).notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
   },
   table => [
     index("embeddingIndex").using(
@@ -54,6 +57,10 @@ export const chunkRelations = relations(chunk, ({ one }) => ({
   file: one(file, {
     fields: [chunk.fileId],
     references: [file.id],
+  }),
+  user: one(user, {
+    fields: [chunk.userId],
+    references: [user.id],
   }),
 }))
 

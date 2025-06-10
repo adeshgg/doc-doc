@@ -75,6 +75,7 @@ async function addChunk(id: string) {
   await insertChunks({
     chunks: chunkedContent.map((chunk, i) => ({
       id: `${userId}/${fileName}/${i}`,
+      userId,
       fileId: fileId,
       content: chunk.pageContent,
       embedding: allEmbeddings[i],
