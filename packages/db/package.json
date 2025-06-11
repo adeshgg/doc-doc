@@ -31,6 +31,7 @@
     "tsx": "^4.19.3"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.41.0",
     "drizzle-zod": "^0.7.1",
