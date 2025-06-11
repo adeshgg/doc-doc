@@ -32,11 +32,7 @@ export const fileRouter = {
         })
         .returning()
 
-      if (newFile[0]?.id) {
-        await addChunk(newFile[0].id)
-      }
-
-      return newFile
+      return newFile[0]
     }),
 }
 
