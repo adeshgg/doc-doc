@@ -1,13 +1,36 @@
-import { db, desc } from "@workspace/db"
+import { db, desc, eq } from "@workspace/db"
 import { inngest } from "./client"
-import { chat, chunk } from "@workspace/db/schema"
+import { chat, chunk, file } from "@workspace/db/schema"
 import { getImageTextFromUrlUsingLLM, getPdfContentFromUrl } from "@/lib/embed"
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters"
 import { embedMany } from "ai"
 import { google } from "@ai-sdk/google"
 
 export const helloWorld = inngest.createFunction(
-  { id: "hello-world" },
+  {
+    id: "hello-world",
+    retries: 10,
+    onFailure: async ({ event, error }) => {
+      // Update file status to fail
+
+      console.log("event")
+      console.dir(event, { depth: null })
+
+      const { id } = event.data.event.data
+
+      await db
+        .update(file)
+        .set({
+          state: "done",
+          updatedAt: new Date(), // Manually update the 'updatedAt' timestamp
+        })
+        .where(eq(file.id, id))
+        .returning({
+          id: file.id,
+          state: file.state,
+        })
+    },
+  },
   { event: "test/hello.world" },
   async ({ event, step }) => {
     const { id: fileId, ownerId, name, url } = event.data
@@ -63,6 +86,20 @@ export const helloWorld = inngest.createFunction(
       await insertChunks({ chunks: chunksToInsert })
     })
 
+    await step.run("update-file-state", async () => {
+      await db
+        .update(file)
+        .set({
+          state: "done",
+          updatedAt: new Date(), // Manually update the 'updatedAt' timestamp
+        })
+        .where(eq(file.id, fileId))
+        .returning({
+          id: file.id,
+          state: file.state,
+        })
+    })
+
     return {
       success: true,
       message: "File processed and embedded successfully.",
@@ -73,11 +110,3 @@ export const helloWorld = inngest.createFunction(
 async function insertChunks({ chunks }: { chunks: any[] }) {
   return await db.insert(chunk).values(chunks)
 }
-
-// WIP?
-// Why PUT /api/inngest 200 in 1631ms is getting called repeatedly
-// set delay and retires for image and pdf Processing
-// remove stuff not needed from the api package
-// add state in file table and update it to processing, done, or failed
-// test things again
-// update the event names

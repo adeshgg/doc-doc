@@ -1,14 +1,21 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
 import { user } from "./user"
 import { relations } from "drizzle-orm"
 import { chunk } from "./chat"
 import { createInsertSchema } from "drizzle-zod"
+
+export const fileStatusEnum = pgEnum("file_status", [
+  "processing",
+  "done",
+  "failed",
+])
 
 export const file = pgTable("file", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   url: text("url").notNull(),
   name: text("name").notNull(),
   path: text("path").notNull(),
+  state: fileStatusEnum("state").notNull().default("processing"),
   ownerId: text("owner_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
