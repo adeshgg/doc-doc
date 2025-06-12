@@ -1,18 +1,21 @@
-import { db, desc, eq } from "@workspace/db"
-import { inngest } from "./client"
-import { chat, chunk, file } from "@workspace/db/schema"
 import { getImageTextFromUrlUsingLLM, getPdfContentFromUrl } from "@/lib/embed"
-import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters"
-import { embedMany } from "ai"
 import { google } from "@ai-sdk/google"
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters"
+import { db, eq } from "@workspace/db"
+import { chunk, file, FILE_TYPE_VALUES } from "@workspace/db/schema"
+import { embedMany, generateObject } from "ai"
+import { inngest } from "./client"
 
-export const helloWorld = inngest.createFunction(
+export const fileEmbed = inngest.createFunction(
   {
-    id: "hello-world",
+    id: "doc-doc",
     retries: 10,
+    // rateLimit: {
+    //   limit: 10,
+    //   period: "20m",
+    //   key: "event.data.ownerId",
+    // },
     onFailure: async ({ event, error }) => {
-      // Update file status to fail
-
       console.log("event")
       console.dir(event, { depth: null })
 
@@ -31,7 +34,7 @@ export const helloWorld = inngest.createFunction(
         })
     },
   },
-  { event: "test/hello.world" },
+  { event: "doc/file.embed" },
   async ({ event, step }) => {
     const { id: fileId, ownerId, name, url } = event.data
 
@@ -43,6 +46,24 @@ export const helloWorld = inngest.createFunction(
         // Assuming any other URL is an image
         return await getImageTextFromUrlUsingLLM(url)
       }
+    })
+
+    const fileType = await step.run("get-file-type", async () => {
+      const initialContent = content.substring(0, 2000)
+      const model = google("gemini-2.0-flash-001")
+
+      const { object: type } = await generateObject({
+        model,
+        prompt: initialContent,
+        output: "enum",
+        enum: [...FILE_TYPE_VALUES],
+        system:
+          `You are given the starting 2000 character of a file` +
+          `Classify the file as either` +
+          `${FILE_TYPE_VALUES.map(type => `"${type}"`).join(", ")}`,
+      })
+
+      return type
     })
 
     // Step 2: Split the fetched content into smaller chunks
@@ -91,6 +112,7 @@ export const helloWorld = inngest.createFunction(
         .update(file)
         .set({
           state: "done",
+          type: fileType,
           updatedAt: new Date(), // Manually update the 'updatedAt' timestamp
         })
         .where(eq(file.id, fileId))

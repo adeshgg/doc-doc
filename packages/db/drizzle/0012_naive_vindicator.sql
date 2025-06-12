@@ -1,0 +1,2 @@
+CREATE TYPE "public"."file_type" AS ENUM('prescription', 'report', 'imaging', 'clinical', 'financial', 'other');--> statement-breakpoint
+ALTER TABLE "file" ADD COLUMN "type" "file_type" DEFAULT 'other' NOT NULL;

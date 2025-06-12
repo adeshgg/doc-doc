@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   }
 
   await inngest.send({
-    name: "test/hello.world",
+    name: "doc/file.embed",
     data: { ...body },
   })
 

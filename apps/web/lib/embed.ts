@@ -2,9 +2,6 @@ import { google } from "@ai-sdk/google"
 import { generateText, LanguageModelV1 } from "ai"
 import { PdfReader } from "pdfreader"
 
-// A small helper function for waiting
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-
 const systemPrompt =
   `Extract the text out of this image` +
   `Make sure to capute all the details` +
@@ -99,13 +96,6 @@ export async function getImageTextFromUrlUsingLLM(url: string) {
 // }
 
 export async function getPdfContentFromUrl(url: string): Promise<string> {
-  //   let lastError: Error | null = null
-  //   const maxRetries = 10 // Try a total of 10 times
-  //   const initialDelay = 1000 // Start with a 1000ms delay
-
-  //   for (let i = 0; i < maxRetries; i++) {
-  //     try {
-  //   console.log(`[Attempt ${i + 1}] Fetching URL:`, url)
   const response = await fetch(url)
 
   if (!response.ok) {
@@ -129,64 +119,4 @@ export async function getPdfContentFromUrl(url: string): Promise<string> {
       else if (item.text) allText += item.text + " "
     })
   })
-  // } catch (error) {
-  //   lastError = error as Error
-  //   console.log(
-  //     `Attempt ${i + 1} failed. Retrying in ${initialDelay * (i + 1)}ms...`
-  //   )
-  //   // Wait before the next attempt, with increasing delay (exponential backoff)
-  //   await delay(initialDelay * (i + 1))
-  // }
-  //   }
-
-  // If all retries fail, throw the last error we captured
-  //   throw new Error(
-  //     `Failed to fetch PDF after ${maxRetries} attempts. Last error: ${lastError?.message}`
-  //   )
 }
-// export async function getPdfContentFromUrl(url: string): Promise<string> {
-//   let lastError: Error | null = null
-//   const maxRetries = 10 // Try a total of 10 times
-//   const initialDelay = 1000 // Start with a 1000ms delay
-
-//   for (let i = 0; i < maxRetries; i++) {
-//     try {
-//       console.log(`[Attempt ${i + 1}] Fetching URL:`, url)
-//       const response = await fetch(url)
-
-//       if (!response.ok) {
-//         // If it's a 404, we want to retry. For other errors, we might want to fail faster.
-//         if (response.status === 404) {
-//           throw new Error(`Failed to fetch PDF: Not Found (status 404)`)
-//         }
-//         // For other server errors, throw a different message
-//         throw new Error(
-//           `Failed to fetch PDF: ${response.statusText} (status ${response.status})`
-//         )
-//       }
-
-//       const buffer = Buffer.from(await response.arrayBuffer())
-
-//       return new Promise((resolve, reject) => {
-//         let allText = ""
-//         new PdfReader(null).parseBuffer(buffer, (err, item) => {
-//           if (err) reject(err)
-//           else if (!item) resolve(allText.trim())
-//           else if (item.text) allText += item.text + " "
-//         })
-//       })
-//     } catch (error) {
-//       lastError = error as Error
-//       console.log(
-//         `Attempt ${i + 1} failed. Retrying in ${initialDelay * (i + 1)}ms...`
-//       )
-//       // Wait before the next attempt, with increasing delay (exponential backoff)
-//       await delay(initialDelay * (i + 1))
-//     }
-//   }
-
-//   // If all retries fail, throw the last error we captured
-//   throw new Error(
-//     `Failed to fetch PDF after ${maxRetries} attempts. Last error: ${lastError?.message}`
-//   )
-// }
