@@ -32,10 +32,7 @@
     "@workspace/typescript-config": "workspace:*"
   },
   "dependencies": {
-    "@ai-sdk/google": "^1.2.19",
-    "@langchain/textsplitters": "^0.1.0",
     "@trpc/server": "^11.0.1",
-    "ai": "^4.3.16",
     "better-auth": "^1.2.5",
     "dotenv": "^16.4.7",
     "pdfreader": "^3.0.7",

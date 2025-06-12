@@ -32,9 +32,18 @@ export function FileUploadDemo({
 
   const { mutate: saveFile, isPending: isSaving } = useMutation({
     ...trpc.file.uploadFile.mutationOptions({
-      onSuccess: () => {
-        toast.success("File saved to your account.")
-        setFiles([]) // Clear the file list on success
+      onSuccess: async newFile => {
+        console.log("newFile", newFile)
+        toast.success("File saved, now processing...")
+
+        fetch("/api/embed", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newFile), // Send the newFile data
+        })
+        setFiles([]) // Clear the file list on success or after embed attempt
       },
       onError: error => {
         toast.error("Failed to save file.", { description: error.message })
