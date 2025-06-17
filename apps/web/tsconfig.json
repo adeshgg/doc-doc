@@ -3,9 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
       // "@workspace/ui/*": ["../../packages/ui/src/*"],
       // "@workspace/api/*": ["../../packages/api/src/*"],
       // "@workspace/db/*": ["../../packages/db/src/*"]
@@ -24,7 +22,5 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

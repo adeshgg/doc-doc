@@ -4,11 +4,9 @@ import { relations } from "drizzle-orm"
 import { chunk } from "./chat"
 import { createInsertSchema } from "drizzle-zod"
 
-export const fileStatusEnum = pgEnum("file_status", [
-  "processing",
-  "indexed",
-  "failed",
-])
+export const FILE_STATUS = ["processing", "indexed", "failed"] as const
+
+export const fileStatusEnum = pgEnum("file_status", FILE_STATUS)
 
 export const FILE_TYPE_VALUES = [
   "prescription",
