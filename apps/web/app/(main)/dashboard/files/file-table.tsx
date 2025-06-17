@@ -18,23 +18,7 @@ export function FilesTable() {
   const searchParams = useSearchParams()
 
   // 1. Parse search params on the client to drive the queries.
-  // const search = searchParamsCache.parse(Object.fromEntries(searchParams))
-
-  const rawParams = Object.fromEntries(searchParams)
-
-  // 2. If a 'sort' param exists and it's a string, parse it as JSON
-  if (typeof rawParams.sort === "string") {
-    try {
-      rawParams.sort = JSON.parse(rawParams.sort)
-    } catch (e) {
-      // If the JSON is malformed, delete it to avoid Zod errors
-      delete rawParams.sort
-      console.error("Failed to parse 'sort' parameter from URL:", e)
-    }
-  }
-
-  // 3. Now, parse the corrected object. This will succeed.
-  const search = searchParamsCache.parse(rawParams)
+  const search = searchParamsCache.parse(Object.fromEntries(searchParams))
 
   const trpc = useTRPC()
 
