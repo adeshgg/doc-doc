@@ -1,4 +1,5 @@
 import {
+  File,
   file,
   FILE_STATUS,
   FILE_TYPE_VALUES,
@@ -100,4 +101,44 @@ export const fileRouter = {
         return { data: [], pageCount: 0 }
       }
     }),
+  getFileStatusCounts: privateProcedure.query(async ({ ctx }) => {
+    const statusCounts = await db
+      .select({ status: file.status, count: count() })
+      .from(file)
+      .where(eq(file.ownerId, ctx.userId))
+      .groupBy(file.status)
+
+    // 2. Define the initial shape with all possible statuses set to 0
+    const initialCounts = Object.fromEntries(
+      FILE_STATUS.map(status => [status, 0])
+    ) as Record<File["status"], number>
+
+    // 3. Use .reduce() to transform the array into the desired object format
+    const formattedCounts = statusCounts.reduce((acc, { status, count }) => {
+      acc[status] = count
+      return acc
+    }, initialCounts)
+
+    // 4. Return the formatted object directly from the API
+    return formattedCounts
+  }),
+
+  getFileTypeCounts: privateProcedure.query(async ({ ctx }) => {
+    const typeCounts = await db
+      .select({ type: file.type, count: count() })
+      .from(file)
+      .where(eq(file.ownerId, ctx.userId))
+      .groupBy(file.type)
+
+    const initialCounts = Object.fromEntries(
+      FILE_TYPE_VALUES.map(type => [type, 0])
+    ) as Record<File["type"], number>
+
+    const formattedCounts = typeCounts.reduce((acc, { type, count }) => {
+      acc[type] = count
+      return acc
+    }, initialCounts)
+
+    return formattedCounts
+  }),
 }

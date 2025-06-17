@@ -49,3 +49,5 @@ export const insertFileBuildSchema = createInsertSchema(file).omit({
   createdAt: true,
   updatedAt: true,
 })
+
+export type File = typeof file.$inferSelect
