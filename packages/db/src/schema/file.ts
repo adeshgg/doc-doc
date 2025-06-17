@@ -6,7 +6,7 @@ import { createInsertSchema } from "drizzle-zod"
 
 export const fileStatusEnum = pgEnum("file_status", [
   "processing",
-  "done",
+  "indexed",
   "failed",
 ])
 
@@ -26,7 +26,7 @@ export const file = pgTable("file", {
   url: text("url").notNull(),
   name: text("name").notNull(),
   path: text("path").notNull(),
-  state: fileStatusEnum("state").notNull().default("processing"),
+  status: fileStatusEnum("status").notNull().default("processing"),
   type: fileTypeEnum("type").notNull().default("other"),
   ownerId: text("owner_id")
     .notNull()

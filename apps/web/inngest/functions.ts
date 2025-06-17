@@ -24,13 +24,13 @@ export const fileEmbed = inngest.createFunction(
       await db
         .update(file)
         .set({
-          state: "done",
+          status: "indexed",
           updatedAt: new Date(), // Manually update the 'updatedAt' timestamp
         })
         .where(eq(file.id, id))
         .returning({
           id: file.id,
-          state: file.state,
+          status: file.status,
         })
     },
   },
@@ -111,14 +111,14 @@ export const fileEmbed = inngest.createFunction(
       await db
         .update(file)
         .set({
-          state: "done",
+          status: "indexed",
           type: fileType,
           updatedAt: new Date(), // Manually update the 'updatedAt' timestamp
         })
         .where(eq(file.id, fileId))
         .returning({
           id: file.id,
-          state: file.state,
+          status: file.status,
         })
     })
 
