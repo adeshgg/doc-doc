@@ -26,7 +26,7 @@ export function DataTableToolbar<TData>({
 
   const columns = React.useMemo(
     () => table.getAllColumns().filter(column => column.getCanFilter()),
-    [table]
+    [table, table.getRowModel().rows]
   )
 
   const onReset = React.useCallback(() => {

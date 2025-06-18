@@ -1,11 +1,8 @@
-// /components/FileUploadDemo.tsx
-
 "use client"
 
 import { useTRPC } from "@/trpc/react"
 import { useMutation } from "@tanstack/react-query"
 import { upload } from "@vercel/blob/client"
-// import { useSession } from "next-auth/react"; // To get user email for the pathname
 import { Button } from "@workspace/ui/components/button"
 import {
   FileUpload,
@@ -16,7 +13,6 @@ import {
   FileUploadItemPreview,
   FileUploadList,
   FileUploadTrigger,
-  // ... other ui imports
 } from "@workspace/ui/components/file-upload"
 import { UploadCloud, X } from "lucide-react"
 import * as React from "react"

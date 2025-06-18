@@ -58,11 +58,16 @@ export function DeleteFilesDialog({
         onSuccess?.()
         props.onOpenChange?.(false)
         queryClient.invalidateQueries({
-          queryKey: [
-            trpc.file.getFiles.queryKey(),
-            trpc.file.getFileStatusCounts.queryKey(),
-            trpc.file.getFileTypeCounts.queryKey(),
-          ],
+          // queryKey: trpc.file.getFiles.queryKey(),
+          predicate: query => {
+            // The queryKey from tRPC is an array, e.g., [['file', 'getFiles'], { ... }]
+            // We check if the first element of the key is an array,
+            // and if its first element is 'file'.
+            return (
+              Array.isArray(query.queryKey[0]) &&
+              query.queryKey[0][0] === "file"
+            )
+          },
         })
       },
     })
