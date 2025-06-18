@@ -12,6 +12,7 @@ import { searchParamsCache } from "@/lib/types"
 import { getFilesTableColumns } from "./file-table-column"
 import { useMemo, useTransition } from "react"
 import { cn } from "@workspace/ui/lib/utils"
+import { DataTableSortList } from "@/components/data-table/data-table-sort-list"
 
 export function FilesTable() {
   const [isPending, startTransition] = useTransition()
@@ -21,9 +22,6 @@ export function FilesTable() {
   const search = searchParamsCache.parse(Object.fromEntries(searchParams))
 
   const trpc = useTRPC()
-
-  console.log("search")
-  console.dir(search, { depth: null })
 
   // 2. Use `useSuspenseQuery`. It will read from the cache on first load,
   // or suspend the component if data is being fetched on the client.
@@ -62,6 +60,7 @@ export function FilesTable() {
     startTransition,
     // Add other options your useDataTable hook supports
     // For example, to enable sorting:
+    enableSorting: true,
     initialState: {
       sorting: [
         {
@@ -75,7 +74,9 @@ export function FilesTable() {
   return (
     <div className={cn(isPending && "animate-pulse")}>
       <DataTable table={table}>
-        <DataTableToolbar table={table} />
+        <DataTableToolbar table={table}>
+          <DataTableSortList table={table} align="end" />
+        </DataTableToolbar>
         {/*
           Your toolbar components (like filters, etc.) go here.
           They will interact with the `table` instance to update

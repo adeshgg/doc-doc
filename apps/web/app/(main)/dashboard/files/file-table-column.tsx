@@ -95,7 +95,8 @@ export function getFilesTableColumns({
       id: "name",
       accessorKey: "name",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Name" />
+        // <DataTableColumnHeader column={column} title="Name" />
+        <div>Name</div>
       ),
       cell: ({ row }) => {
         return (
@@ -117,7 +118,8 @@ export function getFilesTableColumns({
       id: "status",
       accessorKey: "status",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Status" />
+        // <DataTableColumnHeader column={column} title="Status" />
+        <div>Status</div>
       ),
       cell: ({ cell }) => {
         const status = cell.getValue<File["status"]>()
@@ -146,12 +148,13 @@ export function getFilesTableColumns({
       },
       enableColumnFilter: true,
     },
-    // Column 4: Priority
+    // Column 4: Type
     {
       id: "type",
       accessorKey: "type",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Type" />
+        // <DataTableColumnHeader column={column} title="Type" />
+        <div>Type</div>
       ),
       cell: ({ cell }) => {
         const type = cell.getValue<File["type"]>()
@@ -185,7 +188,8 @@ export function getFilesTableColumns({
       id: "createdAt",
       accessorKey: "createdAt",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created At" />
+        // <DataTableColumnHeader column={column} title="Created At" />
+        <div>Created At</div>
       ),
       cell: ({ cell }) => new Date(cell.getValue<Date>()).toLocaleDateString(),
       //   meta: {
