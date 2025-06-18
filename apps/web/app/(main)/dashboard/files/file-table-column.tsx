@@ -215,21 +215,10 @@ export function getFilesTableColumns({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem
-              onSelect={() => setRowAction({ row, variant: "update" })}
-            >
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() => window.open(row.original.url, "_blank")}
-            >
-              Download
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
+              className="cursor-pointer"
               onSelect={() => setRowAction({ row, variant: "delete" })}
             >
               Delete
-              <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

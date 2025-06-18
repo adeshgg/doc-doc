@@ -141,4 +141,25 @@ export const fileRouter = {
 
     return formattedCounts
   }),
+  deleteFiles: privateProcedure
+    .input(
+      z.object({
+        ids: z.array(z.string().uuid()),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx
+      const { ids } = input
+
+      try {
+        await db
+          .delete(file)
+          .where(and(eq(file.ownerId, userId), inArray(file.id, ids)))
+
+        return { success: true }
+      } catch (err) {
+        console.error("Error deleting files:", err)
+        return { success: false }
+      }
+    }),
 }

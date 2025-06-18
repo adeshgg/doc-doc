@@ -37,7 +37,6 @@ import { CSS } from "@dnd-kit/utilities"
 import { Slot } from "@radix-ui/react-slot"
 import * as React from "react"
 
-// import { composeEventHandlers, useComposedRefs } from "@/lib/composition";
 import * as ReactDOM from "react-dom"
 import { cn } from "../lib/utils"
 import { composeEventHandlers, useComposedRefs } from "../lib/composition"

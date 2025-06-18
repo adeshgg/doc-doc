@@ -10,9 +10,18 @@ import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { useTRPC } from "@/trpc/react"
 import { searchParamsCache } from "@/lib/types"
 import { getFilesTableColumns } from "./file-table-column"
-import { useMemo, useTransition } from "react"
+import { useMemo, useState, useTransition } from "react"
 import { cn } from "@workspace/ui/lib/utils"
 import { DataTableSortList } from "@/components/data-table/data-table-sort-list"
+import { Row } from "@tanstack/react-table"
+import { File } from "@workspace/db/schema"
+import { DeleteFilesDialog } from "./delete-file-dialog"
+import FileTableActionBar from "./file-table-action-bar"
+
+export interface DataTableRowAction<TData> {
+  row: Row<TData>
+  variant: "update" | "delete"
+}
 
 export function FilesTable() {
   const [isPending, startTransition] = useTransition()
@@ -42,15 +51,19 @@ export function FilesTable() {
   // guarantees the data is available here.
   const { data, pageCount } = filesResponse
 
+  const [rowAction, setRowAction] = useState<DataTableRowAction<File> | null>(
+    null
+  )
+
   // 4. Memoize columns and initialize the data table hook.
   const columns = useMemo(
     () =>
       getFilesTableColumns({
         statusCounts,
         typeCounts,
-        setRowAction: () => {}, // Replace with your actual state setter if needed
+        setRowAction,
       }),
-    []
+    [statusCounts, typeCounts]
   )
 
   const { table } = useDataTable({
@@ -72,17 +85,20 @@ export function FilesTable() {
   })
 
   return (
-    <div className={cn(isPending && "animate-pulse")}>
-      <DataTable table={table}>
+    <div className={cn("mt-12", isPending && "opacity-90 animate-pulse")}>
+      {/* <div> */}
+      <DataTable table={table} actionBar={<FileTableActionBar table={table} />}>
         <DataTableToolbar table={table}>
           <DataTableSortList table={table} align="end" />
         </DataTableToolbar>
-        {/*
-          Your toolbar components (like filters, etc.) go here.
-          They will interact with the `table` instance to update
-          the URL search params, which triggers a re-fetch.
-          */}
       </DataTable>
+      <DeleteFilesDialog
+        open={rowAction?.variant === "delete"}
+        onOpenChange={() => setRowAction(null)}
+        files={rowAction?.row.original ? [rowAction?.row.original] : []}
+        showTrigger={false}
+        onSuccess={() => rowAction?.row.toggleSelected(false)}
+      />
     </div>
   )
 }
