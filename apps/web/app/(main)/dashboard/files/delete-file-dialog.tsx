@@ -73,6 +73,27 @@ export function DeleteFilesDialog({
     })
   )
 
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+    mutate(
+      {
+        ids: files.map(file => file.id),
+      },
+      {
+        onSuccess: async () => {
+          await Promise.all(
+            files.map(file =>
+              fetch(`/api/blob/delete?fileurl=${file.url}`, {
+                method: "DELETE",
+              })
+            )
+          )
+          toast(`${files.length > 1 ? "Files" : "File"} deleted successfully`)
+        },
+      }
+    )
+  }
+
   if (isDesktop) {
     return (
       <Dialog {...props}>
@@ -100,21 +121,7 @@ export function DeleteFilesDialog({
             <Button
               aria-label="Delete selected rows"
               variant="destructive"
-              onClick={e => {
-                e.preventDefault()
-                mutate(
-                  {
-                    ids: files.map(file => file.id),
-                  },
-                  {
-                    onSuccess: () => {
-                      toast(
-                        `${files.length > 1 ? "Files" : "File"} deleted successfully`
-                      )
-                    },
-                  }
-                )
-              }}
+              onClick={handleDelete}
               disabled={status === "pending"}
             >
               {status === "pending" && (
@@ -157,22 +164,7 @@ export function DeleteFilesDialog({
           <Button
             aria-label="Delete selected rows"
             variant="destructive"
-            onClick={e => {
-              e.preventDefault()
-              mutate(
-                {
-                  ids: files.map(file => file.id),
-                },
-                {
-                  onSuccess: () => {
-                    toast(
-                      `${files.length > 1 ? "Files" : "File"} deleted successfully`
-                    )
-                  },
-                  onSettled: () => {},
-                }
-              )
-            }}
+            onClick={handleDelete}
             disabled={status === "pending"}
           >
             {status === "pending" && (
