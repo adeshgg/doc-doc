@@ -1,7 +1,7 @@
 "use client"
 
 import type { Column, Table } from "@tanstack/react-table"
-import { X } from "lucide-react"
+import { CloudUpload, X } from "lucide-react"
 import * as React from "react"
 
 import { DataTableDateFilter } from "@/components/data-table/data-table-date-filter"
@@ -11,6 +11,7 @@ import { DataTableViewOptions } from "@/components/data-table/data-table-view-op
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { cn } from "@workspace/ui/lib/utils"
+import { UploadFileDialog } from "@/app/(main)/dashboard/files/upload-file-dialog"
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<"div"> {
   table: Table<TData>
@@ -63,6 +64,7 @@ export function DataTableToolbar<TData>({
       <div className="flex items-center gap-2">
         {children}
         <DataTableViewOptions table={table} />
+        <UploadFileDialog />
       </div>
     </div>
   )

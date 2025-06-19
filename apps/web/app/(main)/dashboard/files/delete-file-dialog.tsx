@@ -31,9 +31,7 @@ import { File } from "@workspace/db/schema"
 import { useTRPC } from "@/trpc/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-// import { deleteTasks } from "../_lib/actions";
-
-interface DeleteTasksDialogProps
+interface DeleteFilesDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
   files: Row<File>["original"][]
   showTrigger?: boolean
@@ -45,8 +43,7 @@ export function DeleteFilesDialog({
   showTrigger = true,
   onSuccess,
   ...props
-}: DeleteTasksDialogProps) {
-  //   const [isDeletePending, startDeleteTransition] = React.useTransition();
+}: DeleteFilesDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 640px)")
 
   const trpc = useTRPC()
