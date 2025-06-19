@@ -1,22 +1,22 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useSuspenseQuery } from "@tanstack/react-query"
-
-import { useDataTable } from "@/hooks/use-data-table"
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
+import { Row } from "@tanstack/react-table"
+import { useEffect, useMemo, useRef, useState, useTransition } from "react"
 
 import { DataTable } from "@/components/data-table/data-table"
-import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { useTRPC } from "@/trpc/react"
-import { searchParamsCache } from "@/lib/types"
-import { getFilesTableColumns } from "./file-table-column"
-import { useMemo, useState, useTransition } from "react"
-import { cn } from "@workspace/ui/lib/utils"
 import { DataTableSortList } from "@/components/data-table/data-table-sort-list"
-import { Row } from "@tanstack/react-table"
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
+import { useDataTable } from "@/hooks/use-data-table"
+import { searchParamsCache } from "@/lib/types"
+import { useTRPC } from "@/trpc/react"
 import { File } from "@workspace/db/schema"
-import { DeleteFilesDialog } from "./delete-file-dialog"
+import { cn } from "@workspace/ui/lib/utils"
+
 import FileTableActionBar from "./file-table-action-bar"
+import { DeleteFilesDialog } from "./delete-file-dialog"
+import { getFilesTableColumns } from "./file-table-column"
 
 export interface DataTableRowAction<TData> {
   row: Row<TData>
@@ -26,53 +26,95 @@ export interface DataTableRowAction<TData> {
 export function FilesTable() {
   const [isPending, startTransition] = useTransition()
   const searchParams = useSearchParams()
-
-  // 1. Parse search params on the client to drive the queries.
   const search = searchParamsCache.parse(Object.fromEntries(searchParams))
 
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
 
-  // 2. Use `useSuspenseQuery`. It will read from the cache on first load,
-  // or suspend the component if data is being fetched on the client.
-  const { data: filesResponse } = useSuspenseQuery(
-    trpc.file.getFiles.queryOptions(search)
-  )
-
-  // You can also fetch the other data in the same way if needed by the UI
-  const { data: statusCounts } = useSuspenseQuery(
+  const getFilesQueryOptions = trpc.file.getFiles.queryOptions(search)
+  const getFileStatusCountsQueryOptions =
     trpc.file.getFileStatusCounts.queryOptions()
-  )
-  const { data: typeCounts } = useSuspenseQuery(
+  const getFileTypeCountsQueryOptions =
     trpc.file.getFileTypeCounts.queryOptions()
-  )
-  // ... etc.
 
-  // 3. Destructure the data. No need for `|| {}` or `?.` because Suspense
-  // guarantees the data is available here.
-  const { data, pageCount } = filesResponse
+  const { data: filesResponse } = useSuspenseQuery({
+    ...getFilesQueryOptions,
+    refetchInterval: query => {
+      const files = query.state.data?.data
+      if (!files) return false
+      const hasProcessingFiles = files.some(
+        (file: File) => file.status === "processing"
+      )
+      return hasProcessingFiles ? 30000 : false
+    },
+  })
+
+  const statusCountsQuery = useSuspenseQuery(getFileStatusCountsQueryOptions)
+  const typeCountsQuery = useSuspenseQuery(getFileTypeCountsQueryOptions)
+
+  const { data: statusCounts } = statusCountsQuery
+  const { data: typeCounts } = typeCountsQuery
 
   const [rowAction, setRowAction] = useState<DataTableRowAction<File> | null>(
     null
   )
 
-  // 4. Memoize columns and initialize the data table hook.
-  const columns = useMemo(
-    () =>
-      getFilesTableColumns({
-        statusCounts,
-        typeCounts,
-        setRowAction,
-      }),
-    [statusCounts, typeCounts]
-  )
+  const columns = useMemo(() => {
+    return getFilesTableColumns({
+      statusCounts,
+      typeCounts,
+      setRowAction,
+    })
+  }, [
+    statusCountsQuery.dataUpdatedAt,
+    typeCountsQuery.dataUpdatedAt,
+    setRowAction,
+  ])
+
+  const { data, pageCount } = filesResponse
+  const prevFilesDataRef = useRef<File[]>(null)
+
+  useEffect(() => {
+    const oldData = prevFilesDataRef.current
+    const newData = data
+    if (oldData) {
+      const oldProcessingIds = new Set(
+        oldData
+          .filter(file => file.status === "processing")
+          .map(file => file.id)
+      )
+      if (oldProcessingIds.size > 0) {
+        const newProcessingIds = new Set(
+          newData
+            .filter(file => file.status === "processing")
+            .map(file => file.id)
+        )
+        const aFileHasFinished = [...oldProcessingIds].some(
+          id => !newProcessingIds.has(id)
+        )
+        if (aFileHasFinished) {
+          queryClient.invalidateQueries({
+            queryKey: getFileStatusCountsQueryOptions.queryKey,
+          })
+          queryClient.invalidateQueries({
+            queryKey: getFileTypeCountsQueryOptions.queryKey,
+          })
+        }
+      }
+    }
+    prevFilesDataRef.current = data
+  }, [
+    data,
+    queryClient,
+    getFileStatusCountsQueryOptions,
+    getFileTypeCountsQueryOptions,
+  ])
 
   const { table } = useDataTable({
     data,
     columns,
     pageCount,
     startTransition,
-    // Add other options your useDataTable hook supports
-    // For example, to enable sorting:
     enableSorting: true,
     initialState: {
       sorting: [
@@ -86,8 +128,8 @@ export function FilesTable() {
 
   return (
     <div className={cn("mt-12", isPending && "opacity-90 animate-pulse")}>
-      {/* <div> */}
       <DataTable table={table} actionBar={<FileTableActionBar table={table} />}>
+        {/* DataTableToolbar receives the updated table object from DataTable */}
         <DataTableToolbar table={table}>
           <DataTableSortList table={table} align="end" />
         </DataTableToolbar>

@@ -3,12 +3,9 @@ import { Suspense } from "react"
 
 import { prefetch, HydrateClient, trpc } from "@/trpc/server"
 
-// import { Shell } from "@/components/shell"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
-// import { FilesTable } from "./_components/files-table"
 import { SearchParams, searchParamsCache } from "@/lib/types"
 import { FilesTable } from "./file-table"
-// import { searchParamsCache } from "./_lib/validations"
 
 interface FilesPageProps {
   searchParams: Promise<SearchParams>
