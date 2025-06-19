@@ -41,7 +41,7 @@ export function Chat({
     useScrollToBottom<HTMLDivElement>()
 
   return (
-    <div className="flex flex-row justify-center pb-20 h-dvh">
+    <div className="flex flex-row justify-center h-[calc(100dvh-64px)] w-full pb-8">
       <div className="flex flex-col justify-between items-center gap-4">
         <div
           ref={messagesContainerRef}
