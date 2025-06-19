@@ -25,5 +25,6 @@ export {
   sql,
   asc,
   desc,
+  count,
   // Add any other Drizzle functions you commonly use
 } from "drizzle-orm"
