@@ -56,7 +56,7 @@ export function Chat({
         <div ref={messagesEndRef} className="flex-shrink-0 min-h-[1px]" />
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 flex justify-center bg-white dark:bg-black border-t border-zinc-200 dark:border-zinc-800">
+      <div className="fixed bottom-0 left-0 right-0 flex justify-center border-t border-zinc-200 dark:border-zinc-800 bg-clip-padding backdrop-filter backdrop-blur bg-opacity-10 backdrop-saturate-100 backdrop-contrast-100">
         <div className="p-4 w-full md:max-w-[500px]">
           {messages.length === 0 && (
             <div className="grid sm:grid-cols-2 gap-2 w-full mx-auto mb-3">
