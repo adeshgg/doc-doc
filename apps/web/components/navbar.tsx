@@ -19,7 +19,7 @@ export default function Navbar() {
           <div className="flex flex-shrink-0 items-center">
             <Link href="/">
               <h1 className="font-space-grotesk scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-                Logo.
+                doc-doc.
               </h1>
             </Link>
           </div>

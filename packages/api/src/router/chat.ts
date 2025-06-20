@@ -1,6 +1,6 @@
 import { addChatBuildSchema, chat } from "@workspace/db/schema"
 import { privateProcedure } from "../trpc"
-import { db, eq } from "@workspace/db"
+import { db, desc, eq } from "@workspace/db"
 import { z } from "zod"
 
 export const chatRouter = {
@@ -14,7 +14,7 @@ export const chatRouter = {
         return await db
           .update(chat)
           .set({
-            messages: JSON.stringify(messages),
+            messages,
           })
           .where(eq(chat.id, id))
       }
@@ -22,7 +22,7 @@ export const chatRouter = {
       return await db.insert(chat).values({
         id,
         authorId: ctx.userId,
-        messages: JSON.stringify(messages),
+        messages,
       })
     }),
   getChatById: privateProcedure
@@ -38,4 +38,18 @@ export const chatRouter = {
         .where(eq(chat.id, input.id))
       return selectedChat
     }),
+  getChatsByUserId: privateProcedure.query(async ({ ctx }) => {
+    const chats = await db
+      .select()
+      .from(chat)
+      .where(eq(chat.authorId, ctx.userId))
+      .orderBy(desc(chat.updatedAt))
+
+    return chats.map(chat => ({
+      id: chat.id,
+      title: chat.messages[0]?.content || "Untitled Chat",
+      createdAt: chat.createdAt,
+      updatedAt: chat.updatedAt,
+    }))
+  }),
 }
