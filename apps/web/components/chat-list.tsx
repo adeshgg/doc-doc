@@ -1,54 +1,41 @@
 "use client"
 
-import {
-  Folder,
-  Forward,
-  MoreHorizontal,
-  Trash2,
-  type LucideIcon,
-} from "lucide-react"
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu"
+import { useTRPC } from "@/trpc/react"
+import { useQuery } from "@tanstack/react-query"
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@workspace/ui/components/sidebar"
 import Link from "next/link"
 
-const chats = [
-  {
-    id: "123sdf23edwdsdfs",
-    title: "Chat with Alice",
-  },
-  {
-    id: "456sdf23edwdsdfs",
-    title: "Chat with Bob",
-  },
-  {
-    id: "789sdf23edwdsdfs",
-    title: "Chat with Charlie",
-  },
-]
-
 export function ChatList() {
-  const { isMobile } = useSidebar()
+  const trpc = useTRPC()
+
+  const { data: chats, status } = useQuery(
+    trpc.chat.getChatsByUserId.queryOptions()
+  )
+
+  if (status === "pending") {
+    return (
+      <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+        <SidebarGroupLabel>Chats</SidebarGroupLabel>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton disabled>Loading chats...</SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarGroup>
+    )
+  }
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Chats</SidebarGroupLabel>
       <SidebarMenu>
-        {chats.map(item => (
+        {chats?.map(item => (
           <SidebarMenuItem key={item.id}>
             <SidebarMenuButton asChild>
               <Link href={`/chat/${item.id}`}>

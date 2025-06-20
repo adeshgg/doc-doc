@@ -12,9 +12,18 @@ import { user } from "./user"
 import { file } from "./file"
 import { createInsertSchema } from "drizzle-zod"
 
+export type Message = {
+  role: "user" | "assistant" | "system"
+  content: string
+  parts?: {
+    type: string
+    text: string
+  }[]
+}
+
 export const chat = pgTable("chat", {
   id: text("id").notNull().primaryKey(),
-  messages: json("messages").notNull(),
+  messages: json("messages").$type<Message[]>().notNull(),
   authorId: text("author_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),

@@ -6,6 +6,8 @@ import { motion } from "motion/react"
 import { Message as PreviewMessage } from "@/components/message"
 import { useScrollToBottom } from "@/components/use-scroll-to-bottom"
 import { Session } from "@/lib/types"
+import { useQueryClient } from "@tanstack/react-query"
+import { useTRPC } from "@/trpc/react"
 
 const suggestedActions = [
   {
@@ -29,10 +31,18 @@ export function Chat({
   initialMessages: Array<Message>
   session: Session | null
 }) {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+
   const { messages, handleSubmit, input, setInput, append } = useChat({
     body: { id, allFiles: true },
     initialMessages,
     onFinish: () => {
+      if (initialMessages.length === 0) {
+        queryClient.invalidateQueries({
+          queryKey: trpc.chat.getChatsByUserId.queryKey(),
+        })
+      }
       window.history.replaceState({}, "", `/chat/${id}`)
     },
   })
