@@ -1,10 +1,4 @@
-import {
-  File,
-  file,
-  FILE_STATUS,
-  FILE_TYPE_VALUES,
-  fileTypeEnum,
-} from "@workspace/db/schema"
+import { File, file, FILE_STATUS, FILE_TYPE_VALUES } from "@workspace/db/schema"
 import { privateProcedure } from "../trpc"
 import { and, asc, count, db, desc, eq, ilike, inArray } from "@workspace/db"
 import { z } from "zod"
@@ -101,6 +95,28 @@ export const fileRouter = {
         return { data: [], pageCount: 0 }
       }
     }),
+
+  getFileByType: privateProcedure.query(async ({ ctx }) => {
+    const { userId } = ctx
+
+    const allFiles = await db
+      .select()
+      .from(file)
+      .where(and(eq(file.ownerId, userId), eq(file.status, "indexed")))
+
+    const groupedFiles: Record<string, File[]> = {}
+
+    for (const file of allFiles) {
+      const group = groupedFiles[file.type]
+      if (group) {
+        group.push(file)
+      } else {
+        groupedFiles[file.type] = [file]
+      }
+    }
+    return groupedFiles
+  }),
+
   getFileStatusCounts: privateProcedure.query(async ({ ctx }) => {
     const statusCounts = await db
       .select({ status: file.status, count: count() })
@@ -141,6 +157,7 @@ export const fileRouter = {
 
     return formattedCounts
   }),
+
   deleteFiles: privateProcedure
     .input(
       z.object({
