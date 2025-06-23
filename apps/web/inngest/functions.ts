@@ -1,10 +1,10 @@
 import { getImageTextFromUrlUsingLLM, getPdfContentFromUrl } from "@/lib/embed"
-import { google } from "@ai-sdk/google"
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters"
 import { db, eq } from "@workspace/db"
 import { chunk, file, FILE_TYPE_VALUES } from "@workspace/db/schema"
 import { embedMany, generateObject } from "ai"
 import { inngest } from "./client"
+import { embeddingModel, model } from "@/app/ai/models"
 
 export const fileEmbed = inngest.createFunction(
   {
@@ -50,10 +50,9 @@ export const fileEmbed = inngest.createFunction(
 
     const fileType = await step.run("get-file-type", async () => {
       const initialContent = content.substring(0, 2000)
-      const model = google("gemini-2.0-flash-001")
 
       const { object: type } = await generateObject({
-        model,
+        model: model,
         prompt: initialContent,
         output: "enum",
         enum: [...FILE_TYPE_VALUES],
@@ -86,7 +85,7 @@ export const fileEmbed = inngest.createFunction(
       for (let i = 0; i < chunkedContent.length; i += batchSize) {
         const batch = chunkedContent.slice(i, i + batchSize)
         const { embeddings: batchEmbeddings } = await embedMany({
-          model: google.textEmbeddingModel("text-embedding-004"),
+          model: embeddingModel,
           values: batch.map(chunk => chunk.pageContent),
         })
         embeddings.push(...batchEmbeddings)

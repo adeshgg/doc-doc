@@ -1,4 +1,4 @@
-import { google } from "@ai-sdk/google"
+import { modelWithStructuredOutputs } from "@/app/ai/models"
 import { generateText, LanguageModelV1 } from "ai"
 import { PdfReader } from "pdfreader"
 
@@ -13,9 +13,7 @@ export async function getImageTextFromUrlUsingLLM(url: string) {
   const imageUrl = url.split("?")[0]
   console.log(imageUrl)
   const { text } = await generateText({
-    model: google("gemini-2.0-flash-001", {
-      structuredOutputs: true,
-    }) as LanguageModelV1,
+    model: modelWithStructuredOutputs as LanguageModelV1,
     system: systemPrompt,
     messages: [
       {
@@ -34,66 +32,6 @@ export async function getImageTextFromUrlUsingLLM(url: string) {
 
   return text
 }
-
-// Later when implementing async worker add re-tries there instead
-
-/**
- * Gets text from an image URL using a Google Gemini model,
- * with a retry mechanism to handle transient errors like 404s from Vercel Blob.
- *
- * @param url The public URL of the image file.
- * @param systemPrompt The system prompt to guide the LLM.
- * @returns The extracted text from the image.
-//  */
-// export async function getImageTextFromUrlUsingLLM(url: string) {
-//   let lastError: Error | null = null
-//   const maxRetries = 10 // Total attempts
-//   const initialDelay = 1500 // Start with a 1.5-second delay
-
-//   for (let i = 0; i < maxRetries; i++) {
-//     try {
-//       console.log(`[Attempt ${i + 1}] Processing image URL:`, url)
-//       // It's good practice to remove query params if they are not needed by the final URL
-//       const imageUrl = url.split("?")[0]
-
-//       // The entire generateText call is retried because the fetch happens inside it.
-//       const { text } = await generateText({
-//         model: google("gemini-1.5-flash-latest") as LanguageModelV1,
-//         system: systemPrompt,
-//         messages: [
-//           {
-//             role: "user",
-//             content: [
-//               {
-//                 type: "image",
-//                 image: new URL(imageUrl!),
-//               },
-//             ],
-//           },
-//         ],
-//       })
-
-//       console.log("Successfully extracted text from image.")
-//       // On success, return the text and exit the loop.
-//       return text
-//     } catch (error) {
-//       lastError = error as Error
-//       console.error(`Attempt ${i + 1} failed: ${lastError.message}`)
-
-//       // Don't wait after the final attempt
-//       if (i < maxRetries - 1) {
-//         const waitTime = initialDelay * (i + 1) // Increase delay for subsequent retries
-//         console.log(`Retrying in ${waitTime / 1000}s...`)
-//         await delay(waitTime)
-//       }
-//     }
-//   }
-
-//   // If all retries failed, throw a final, informative error.
-//   throw new Error(
-//     `Failed to process image after ${maxRetries} attempts. Last error: ${lastError?.message}`
-//   )
-// }
 
 export async function getPdfContentFromUrl(url: string): Promise<string> {
   const response = await fetch(url)

@@ -4,6 +4,7 @@ import { motion } from "motion/react"
 import { ReactNode } from "react"
 import { Markdown } from "./markdown"
 import { BotIcon, UserIcon } from "lucide-react"
+import { TextShimmer } from "@workspace/ui/components/text-shimmer"
 
 export const Message = ({
   role,

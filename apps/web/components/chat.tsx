@@ -1,13 +1,14 @@
 "use client"
 
-import { Message } from "ai"
-import { useChat } from "@ai-sdk/react"
-import { motion } from "motion/react"
 import { Message as PreviewMessage } from "@/components/message"
 import { useScrollToBottom } from "@/components/use-scroll-to-bottom"
 import { Session } from "@/lib/types"
-import { useQueryClient } from "@tanstack/react-query"
 import { useTRPC } from "@/trpc/react"
+import { useChat } from "@ai-sdk/react"
+import { useQueryClient } from "@tanstack/react-query"
+import { TextShimmer } from "@workspace/ui/components/text-shimmer"
+import { Message } from "ai"
+import { motion } from "motion/react"
 
 const suggestedActions = [
   {
@@ -34,7 +35,7 @@ export function Chat({
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
-  const { messages, handleSubmit, input, setInput, append } = useChat({
+  const { messages, handleSubmit, input, setInput, append, status } = useChat({
     body: { id, allFiles: true },
     initialMessages,
     onFinish: () => {
@@ -63,6 +64,12 @@ export function Chat({
             content={message.content}
           />
         ))}
+
+        {status === "submitted" && (
+          <TextShimmer className="font-mono text-sm" duration={1}>
+            Generating response...
+          </TextShimmer>
+        )}
         <div ref={messagesEndRef} className="flex-shrink-0 min-h-[1px]" />
       </div>
 
