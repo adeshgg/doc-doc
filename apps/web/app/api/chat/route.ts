@@ -5,7 +5,7 @@ import { streamText } from "ai"
 import { headers } from "next/headers"
 
 export async function POST(request: Request) {
-  const { id, messages, allFiles } = await request.json()
+  const { id, messages, selectedFiles } = await request.json()
 
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       "you are a friendly assistant! keep your responses concise and helpful.",
     messages,
     providerOptions: {
-      allFiles,
+      selectedFiles,
     },
     onFinish: async ({ text }) => {
       console.log("final response from LLM", text)

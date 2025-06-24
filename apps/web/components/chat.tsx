@@ -9,6 +9,8 @@ import { useQueryClient } from "@tanstack/react-query"
 import { TextShimmer } from "@workspace/ui/components/text-shimmer"
 import { Message } from "ai"
 import { motion } from "motion/react"
+import FileSelector from "./file-selector"
+import { useState } from "react"
 
 const suggestedActions = [
   {
@@ -35,8 +37,10 @@ export function Chat({
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
+  const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set())
+
   const { messages, handleSubmit, input, setInput, append, status } = useChat({
-    body: { id, allFiles: true },
+    body: { id, selectedFiles: [...selectedFiles] },
     initialMessages,
     onFinish: () => {
       if (initialMessages.length === 0) {
@@ -115,6 +119,10 @@ export function Chat({
               onChange={event => {
                 setInput(event.target.value)
               }}
+            />
+            <FileSelector
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
             />
           </form>
         </div>

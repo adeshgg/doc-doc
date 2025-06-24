@@ -10,7 +10,7 @@ import { z } from "zod"
 import { embeddingModel, modelWithStructuredOutputs } from "./models"
 
 const middlewareSchema = z.object({
-  allFiles: z.boolean(),
+  selectedFiles: z.array(z.string()),
 })
 
 export const ragMiddleware: LanguageModelV1Middleware = {
@@ -42,12 +42,18 @@ export const ragMiddleware: LanguageModelV1Middleware = {
       output: "enum",
       enum: ["yes", "no"],
       system:
-        "classify the user message if it requires a medical document to answer",
+        `classify the users message to yes or no` +
+        `yes: If it requires a document look up` +
+        `no: If it is a general question or statement that can be answered without requiring any other information from a document`,
       prompt: lastUserMessageContent,
     })
 
     // only use RAG for questions
-    if (classification !== "yes") {
+    if (
+      classification !== "yes" ||
+      !data.selectedFiles ||
+      data.selectedFiles.length < 1
+    ) {
       console.log("short circuiting RAG: Printing params\n")
       console.dir(params, { depth: null })
       messages.push(recentMessage)
@@ -68,9 +74,11 @@ export const ragMiddleware: LanguageModelV1Middleware = {
       value: hypotheticalAnswer,
     })
 
-    const chunksForAllUserFiles = await caller.chunk.getChunksByUserId()
+    const chunksForSelectedFiles = await caller.chunk.getChunksByFileId({
+      ids: data.selectedFiles,
+    })
 
-    const chunksWithSimilarity = chunksForAllUserFiles.map(chunk => ({
+    const chunksWithSimilarity = chunksForSelectedFiles.map(chunk => ({
       ...chunk,
       similarity: cosineSimilarity(
         hypotheticalAnswerEmbedding,

@@ -104,16 +104,20 @@ export const fileRouter = {
       .from(file)
       .where(and(eq(file.ownerId, userId), eq(file.status, "indexed")))
 
-    const groupedFiles: Record<string, File[]> = {}
+    type FileTypeKey = (typeof FILE_TYPE_VALUES)[number]
+
+    const groupedFiles = FILE_TYPE_VALUES.reduce(
+      (acc, type) => {
+        acc[type] = []
+        return acc
+      },
+      {} as Record<FileTypeKey, File[]>
+    )
 
     for (const file of allFiles) {
-      const group = groupedFiles[file.type]
-      if (group) {
-        group.push(file)
-      } else {
-        groupedFiles[file.type] = [file]
-      }
+      groupedFiles[file.type].push(file)
     }
+
     return groupedFiles
   }),
 
