@@ -1,12 +1,11 @@
 "use client"
 
-import type { File } from "@workspace/db/schema"
-import { FILE_TYPE_VALUES, FILE_STATUS } from "@workspace/db/schema"
-import type { DataTableRowAction } from "@/types/data-table" // You'll need to define this type
+import type { DataTableRowAction } from "@/types/data-table"
 import type { ColumnDef } from "@tanstack/react-table"
+import type { File } from "@workspace/db/schema"
+import { FILE_STATUS, FILE_TYPE_VALUES } from "@workspace/db/schema"
 import {
   ArrowUpDown,
-  CalendarIcon,
   CheckCircle,
   CircleDashed,
   Ellipsis,
@@ -16,7 +15,6 @@ import {
 } from "lucide-react"
 import * as React from "react"
 
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
 import { Checkbox } from "@workspace/ui/components/checkbox"
@@ -24,10 +22,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu"
+import type { CheckedState } from "@radix-ui/react-checkbox"
 
 // Helper function to get an icon based on file status
 function getFileStatusIcon(status: File["status"]) {
@@ -73,7 +70,9 @@ export function getFilesTableColumns({
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
-          onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={(value: CheckedState) =>
+            table.toggleAllPageRowsSelected(!!value)
+          }
           aria-label="Select all"
           className="translate-y-0.5"
         />
@@ -81,7 +80,7 @@ export function getFilesTableColumns({
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={value => row.toggleSelected(!!value)}
+          onCheckedChange={(value: CheckedState) => row.toggleSelected(!!value)}
           aria-label="Select row"
           className="translate-y-0.5"
         />
