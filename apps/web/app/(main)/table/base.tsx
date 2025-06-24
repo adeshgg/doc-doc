@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs"
 import * as React from "react"
+import { CheckedState } from "@radix-ui/react-checkbox"
 
 interface Project {
   id: string
@@ -91,14 +92,18 @@ export function DataTableDemo() {
               table.getIsAllPageRowsSelected() ||
               (table.getIsSomePageRowsSelected() && "indeterminate")
             }
-            onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+            onCheckedChange={(value: CheckedState) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
             aria-label="Select all"
           />
         ),
         cell: ({ row }) => (
           <Checkbox
             checked={row.getIsSelected()}
-            onCheckedChange={value => row.toggleSelected(!!value)}
+            onCheckedChange={(value: CheckedState) =>
+              row.toggleSelected(!!value)
+            }
             aria-label="Select row"
           />
         ),

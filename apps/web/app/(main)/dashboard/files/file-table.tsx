@@ -131,7 +131,7 @@ export function FilesTable() {
       <DataTable table={table} actionBar={<FileTableActionBar table={table} />}>
         {/* DataTableToolbar receives the updated table object from DataTable */}
         <DataTableToolbar table={table}>
-          <DataTableSortList table={table} align="end" />
+          <DataTableSortList table={table} />
         </DataTableToolbar>
       </DataTable>
       <DeleteFilesDialog

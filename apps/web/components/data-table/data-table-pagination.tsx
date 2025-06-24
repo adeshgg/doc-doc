@@ -44,7 +44,7 @@ export function DataTablePagination<TData>({
           <p className="whitespace-nowrap font-medium text-sm">Rows per page</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
-            onValueChange={value => {
+            onValueChange={(value: string) => {
               table.setPageSize(Number(value))
             }}
           >
