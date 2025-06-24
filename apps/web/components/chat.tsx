@@ -11,6 +11,7 @@ import { Message } from "ai"
 import { motion } from "motion/react"
 import FileSelector from "./file-selector"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 const suggestedActions = [
   {
@@ -36,6 +37,7 @@ export function Chat({
 }) {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
+  const router = useRouter()
 
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set())
 
@@ -48,7 +50,7 @@ export function Chat({
           queryKey: trpc.chat.getChatsByUserId.queryKey(),
         })
       }
-      window.history.replaceState({}, "", `/chat/${id}`)
+      router.replace(`/chat/${id}`)
     },
   })
 
@@ -68,11 +70,12 @@ export function Chat({
             content={message.content}
           />
         ))}
-
         {status === "submitted" && (
-          <TextShimmer className="font-mono text-sm" duration={1}>
-            Generating response...
-          </TextShimmer>
+          <div className="flex flex-row gap-4 px-4 ml-20 w-full md:w-[500px] md:px-0">
+            <TextShimmer className="font-mono text-sm" duration={1.8}>
+              Generating response...
+            </TextShimmer>
+          </div>
         )}
         <div ref={messagesEndRef} className="flex-shrink-0 min-h-[1px]" />
       </div>

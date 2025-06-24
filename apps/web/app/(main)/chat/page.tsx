@@ -9,7 +9,11 @@ const ChatPage = async () => {
     headers: await headers(),
   })
 
-  return <Chat id={generateId()} initialMessages={[]} session={session} />
+  const chatId = generateId()
+
+  return (
+    <Chat key={chatId} id={chatId} initialMessages={[]} session={session} />
+  )
 }
 
 export default ChatPage

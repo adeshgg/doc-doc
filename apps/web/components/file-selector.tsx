@@ -143,7 +143,10 @@ const FileSelector = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"secondary"}>
+        <Button variant={"secondary"} className="relative">
+          <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 border-2 border-zinc-800 flex justify-center items-center rounded-full bg-sidebar-primary text-white h-6 w-6">
+            {selectedFiles.size}
+          </div>
           <FileText aria-label="Select Files" />
         </Button>
       </DialogTrigger>

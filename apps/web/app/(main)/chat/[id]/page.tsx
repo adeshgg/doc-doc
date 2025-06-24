@@ -31,7 +31,14 @@ const Page = async ({ params }: { params: Params }) => {
     notFound()
   }
 
-  return <Chat id={chat.id} initialMessages={chat.messages} session={session} />
+  return (
+    <Chat
+      key={chat.id}
+      id={chat.id}
+      initialMessages={chat.messages}
+      session={session}
+    />
+  )
 }
 
 export default Page
