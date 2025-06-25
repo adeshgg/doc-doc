@@ -43,7 +43,7 @@ interface DataTableSortListProps<TData>
   extends React.ComponentProps<typeof PopoverContent> {
   table: Table<TData>
 }
-
+// Remove this later
 export function DataTableSortList<TData>({
   table,
   ...props

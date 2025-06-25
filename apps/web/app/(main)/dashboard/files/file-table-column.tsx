@@ -1,9 +1,10 @@
 "use client"
 
-import type { DataTableRowAction } from "@/types/data-table"
+import type { CheckedState } from "@radix-ui/react-checkbox"
+import { FILE_TYPE_VALUES, FILE_STATUS } from "@workspace/db/schema"
+import type { DataTableRowAction } from "@/types/data-table" // You'll need to define this type
 import type { ColumnDef } from "@tanstack/react-table"
 import type { File } from "@workspace/db/schema"
-import { FILE_STATUS, FILE_TYPE_VALUES } from "@workspace/db/schema"
 import {
   ArrowUpDown,
   CheckCircle,
@@ -24,7 +25,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu"
-import type { CheckedState } from "@radix-ui/react-checkbox"
 
 // Helper function to get an icon based on file status
 function getFileStatusIcon(status: File["status"]) {
