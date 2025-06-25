@@ -17,7 +17,7 @@ import { Dispatch, SetStateAction, useMemo } from "react"
 type FileTypeKey = (typeof FILE_TYPE_VALUES)[number]
 
 const checkboxClasses =
-  "data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 data-[state=indeterminate]:bg-blue-600 data-[state=indeterminate]:border-blue-600 border-gray-500"
+  "data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 data-[state=indeterminate]:bg-blue-600 data-[state=indeterminate]:border-blue-600 border-zinc-300 dark:border-zinc-600"
 
 const FileSelector = ({
   selectedFiles,
@@ -144,19 +144,20 @@ const FileSelector = ({
     <Dialog>
       <DialogTrigger asChild>
         <Button variant={"secondary"} className="relative">
-          <div className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 border-2 border-zinc-800 flex justify-center items-center rounded-full bg-sidebar-primary text-white h-6 w-6">
+          <div className="absolute top-0 right-0 flex h-6 w-6 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-sm font-bold text-white dark:border-zinc-900">
             {selectedFiles.size}
           </div>
           <FileText aria-label="Select Files" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] flex flex-col h-[70vh]">
+      <DialogContent className="flex h-[70vh] flex-col sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>File Selection</DialogTitle>
           <DialogDescription>
-            Select the files you want to include.
+            Select the files you want to include in your request.
           </DialogDescription>
         </DialogHeader>
+
         <div className="flex-shrink-0">
           <div className="flex items-center space-x-3 pb-4">
             <Checkbox
@@ -175,17 +176,17 @@ const FileSelector = ({
             />
             <label
               htmlFor="select-all"
-              className="text-white font-semibold cursor-pointer"
+              className="cursor-pointer font-semibold text-zinc-900 dark:text-zinc-50"
             >
               All Files
             </label>
-            <span className="text-blue-400 text-xs font-medium bg-blue-900/30 px-2 py-1 rounded">
+            <span className="rounded px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
               {selectedFiles.size}/{allIds.length} selected
             </span>
           </div>
         </div>
 
-        <div className="flex-grow overflow-y-auto overflow-x-hidden space-y-6 pb-4">
+        <div className="flex-grow space-y-6 overflow-y-auto overflow-x-hidden pb-4">
           {Object.entries(data)
             .filter(([_, files]) => files.length > 0)
             .map(([groupName, files]) => (
@@ -194,14 +195,14 @@ const FileSelector = ({
                   <div className="flex items-center space-x-3 py-1">
                     <Checkbox
                       id={`group-${groupName}`}
-                      checked={groupStates[groupName]}
+                      checked={groupStates[groupName as FileTypeKey]}
                       onCheckedChange={() =>
                         handleGroupToggle(groupName as FileTypeKey)
                       }
                       data-state={
                         isGroupIndeterminate(groupName as FileTypeKey)
                           ? "indeterminate"
-                          : groupStates[groupName]
+                          : groupStates[groupName as FileTypeKey]
                             ? "checked"
                             : "unchecked"
                       }
@@ -209,17 +210,17 @@ const FileSelector = ({
                     />
                     <label
                       htmlFor={`group-${groupName}`}
-                      className="text-white font-semibold cursor-pointer capitalize"
+                      className="cursor-pointer text-base font-semibold capitalize text-zinc-900 dark:text-zinc-50"
                     >
                       {groupName}
                     </label>
                   </div>
 
-                  <div className="ml-8 space-y-2 bg-gray-800/30 rounded-lg p-3 border border-gray-700/50">
+                  <div className="ml-8 space-y-2 rounded-lg border p-3 bg-zinc-50 border-zinc-200 dark:bg-zinc-800/30 dark:border-zinc-700/50">
                     {files.map(file => (
                       <div
                         key={file.id}
-                        className="flex items-center space-x-3 py-1 hover:bg-gray-700/30 rounded px-2 transition-colors"
+                        className="flex items-center space-x-3 rounded px-2 py-1 transition-colors hover:bg-zinc-200/60 dark:hover:bg-zinc-700/40"
                       >
                         <Checkbox
                           id={`file-${file.id}`}
@@ -229,7 +230,7 @@ const FileSelector = ({
                         />
                         <label
                           htmlFor={`file-${file.id}`}
-                          className="text-gray-200 cursor-pointer font-medium truncate"
+                          className="truncate cursor-pointer font-medium text-zinc-600 dark:text-zinc-300"
                           title={file.name}
                         >
                           {file.name}
