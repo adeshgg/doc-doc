@@ -1,14 +1,19 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
+import {
+  useQueryClient,
+  useQuery,
+  keepPreviousData,
+} from "@tanstack/react-query"
 import { Row } from "@tanstack/react-table"
 import { useEffect, useMemo, useRef, useState, useTransition } from "react"
 
 import { DataTable } from "@/components/data-table/data-table"
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DataTableSortList } from "@/components/data-table/data-table-sort-list"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { useDataTable } from "@/hooks/use-data-table"
+import { useDataTable } from "@/hooks/use-data-table" //
 import { searchParamsCache } from "@/lib/types"
 import { useTRPC } from "@/trpc/react"
 import { File } from "@workspace/db/schema"
@@ -24,7 +29,7 @@ export interface DataTableRowAction<TData> {
 }
 
 export function FilesTable() {
-  const [isPending, startTransition] = useTransition()
+  const [isTransitionPending, startTransition] = useTransition()
   const searchParams = useSearchParams()
   const search = searchParamsCache.parse(Object.fromEntries(searchParams))
 
@@ -37,46 +42,47 @@ export function FilesTable() {
   const getFileTypeCountsQueryOptions =
     trpc.file.getFileTypeCounts.queryOptions()
 
-  const { data: filesResponse } = useSuspenseQuery({
+  const { data: filesResponse, isPending: isFilesPending } = useQuery({
     ...getFilesQueryOptions,
-    refetchInterval: query => {
-      const files = query.state.data?.data
-      if (!files) return false
-      const hasProcessingFiles = files.some(
-        (file: File) => file.status === "processing"
-      )
-      return hasProcessingFiles ? 30000 : false
-    },
+    placeholderData: keepPreviousData,
   })
 
-  const statusCountsQuery = useSuspenseQuery(getFileStatusCountsQueryOptions)
-  const typeCountsQuery = useSuspenseQuery(getFileTypeCountsQueryOptions)
-
-  const { data: statusCounts } = statusCountsQuery
-  const { data: typeCounts } = typeCountsQuery
+  const { data: statusCounts } = useQuery(getFileStatusCountsQueryOptions)
+  const { data: typeCounts } = useQuery(getFileTypeCountsQueryOptions)
 
   const [rowAction, setRowAction] = useState<DataTableRowAction<File> | null>(
     null
   )
+  const prevFilesDataRef = useRef<File[]>(null)
+
+  const data = filesResponse?.data ?? []
+  const pageCount = filesResponse?.pageCount ?? -1 // Use -1 or 0 as a safe default
 
   const columns = useMemo(() => {
+    // Ensure statusCounts and typeCounts are defined before creating columns
+    if (!statusCounts || !typeCounts) return []
     return getFilesTableColumns({
       statusCounts,
       typeCounts,
       setRowAction,
     })
-  }, [
-    statusCountsQuery.dataUpdatedAt,
-    typeCountsQuery.dataUpdatedAt,
-    setRowAction,
-  ])
+  }, [statusCounts, typeCounts, setRowAction])
 
-  const { data, pageCount } = filesResponse
-  const prevFilesDataRef = useRef<File[]>(null)
+  const { table } = useDataTable({
+    data,
+    columns,
+    pageCount,
+    startTransition,
+    enableSorting: true,
+    initialState: {
+      sorting: [{ id: "createdAt", desc: true }],
+    },
+  })
 
   useEffect(() => {
+    if (!filesResponse) return // Guard clause for the initial render
     const oldData = prevFilesDataRef.current
-    const newData = data
+    const newData = filesResponse.data
     if (oldData) {
       const oldProcessingIds = new Set(
         oldData
@@ -102,34 +108,23 @@ export function FilesTable() {
         }
       }
     }
-    prevFilesDataRef.current = data
+    prevFilesDataRef.current = newData
   }, [
-    data,
+    filesResponse,
     queryClient,
     getFileStatusCountsQueryOptions,
     getFileTypeCountsQueryOptions,
   ])
 
-  const { table } = useDataTable({
-    data,
-    columns,
-    pageCount,
-    startTransition,
-    enableSorting: true,
-    initialState: {
-      sorting: [
-        {
-          id: "createdAt",
-          desc: true,
-        },
-      ],
-    },
-  })
+  if (isFilesPending || !statusCounts || !typeCounts) {
+    return <DataTableSkeleton columnCount={5} filterCount={2} />
+  }
 
   return (
-    <div className={cn("mt-12", isPending && "opacity-90 animate-pulse")}>
+    <div
+      className={cn("mt-12", isTransitionPending && "opacity-90 animate-pulse")}
+    >
       <DataTable table={table} actionBar={<FileTableActionBar table={table} />}>
-        {/* DataTableToolbar receives the updated table object from DataTable */}
         <DataTableToolbar table={table}>
           <DataTableSortList table={table} />
         </DataTableToolbar>
