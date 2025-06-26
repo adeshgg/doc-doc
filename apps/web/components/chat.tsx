@@ -2,7 +2,6 @@
 
 import { Message as PreviewMessage } from "@/components/message"
 import { useScrollToBottom } from "@/components/use-scroll-to-bottom"
-import { Session } from "@/lib/types"
 import { useTRPC } from "@/trpc/react"
 import { useChat } from "@ai-sdk/react"
 import { useQueryClient } from "@tanstack/react-query"
@@ -29,11 +28,9 @@ const suggestedActions = [
 export function Chat({
   id,
   initialMessages,
-  session,
 }: {
   id: string
   initialMessages: Array<Message>
-  session: Session | null
 }) {
   const trpc = useTRPC()
   const queryClient = useQueryClient()

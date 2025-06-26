@@ -11,7 +11,7 @@ import { DataTableViewOptions } from "@/components/data-table/data-table-view-op
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { cn } from "@workspace/ui/lib/utils"
-import { UploadFileDialog } from "@/app/(main)/dashboard/files/upload-file-dialog"
+import { UploadFileDialog } from "@/app/(main)/files/upload-file-dialog"
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<"div"> {
   table: Table<TData>

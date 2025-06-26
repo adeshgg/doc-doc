@@ -4,10 +4,6 @@ import { signIn, signUp } from "@workspace/api/auth/client"
 import { useRouter } from "next/navigation"
 import React from "react"
 
-// Here the Login component says I will pass you the onSubmit function
-// and auth-form you pass me the data, and the things to do onRequest, onSuccess, onError
-// and I will create the user and call functions when the time comes
-
 const Login = () => {
   const router = useRouter()
   return (
