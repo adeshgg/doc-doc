@@ -18,6 +18,7 @@ import {
 } from "@workspace/ui/components/tabs"
 import { Separator } from "@workspace/ui/components/separator"
 import { Icons } from "@workspace/ui/components/icons"
+import { signIn } from "@workspace/api/auth/client"
 
 // Form variants
 type AuthFormVariant = "signin" | "signup"
@@ -124,6 +125,14 @@ const AuthForm: React.FC<AuthFormProps> = ({
     }
 
     onForgotPassword(email, callbacks)
+  }
+
+  async function handleSocialSignIn(provider: "google" | "github") {
+    const { error } = await signIn.social({
+      provider,
+    })
+    // Show an error toast
+    console.log("error", error)
   }
 
   const resetForm = () => {
@@ -338,8 +347,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
           <Button
             variant="outline"
             type="button"
-            //   disabled={isLoading}
-            disabled
+            disabled={isLoading}
+            onClick={() => handleSocialSignIn("google")}
           >
             <Icons.google className="mr-2 h-4 w-4" />
             Google
@@ -347,8 +356,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
           <Button
             variant="outline"
             type="button"
-            //   disabled={isLoading}
-            disabled
+            disabled={isLoading}
+            onClick={() => handleSocialSignIn("github")}
           >
             <Icons.gitHub className="mr-2 h-4 w-4" />
             GitHub

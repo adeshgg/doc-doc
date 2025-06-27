@@ -25,7 +25,7 @@ const Login = () => {
               onSuccess: () => {
                 onSuccess()
                 // Additional success handling like redirection
-                router.push("/dashboard")
+                router.push("/")
               },
               onError: ctx => {
                 onError(new Error(ctx.error.message))
@@ -46,7 +46,7 @@ const Login = () => {
               onSuccess: () => {
                 onSuccess()
                 // Additional success handling like redirection
-                router.push("/dashboard")
+                router.push("/")
               },
               onError: ctx => {
                 onError(new Error(ctx.error.message))
