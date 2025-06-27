@@ -1,16 +1,25 @@
 import { addChatBuildSchema, chat } from "@workspace/db/schema"
 import { privateProcedure } from "../trpc"
-import { db, desc, eq } from "@workspace/db"
+import { and, db, desc, eq } from "@workspace/db"
 import { z } from "zod"
+import { TRPCError } from "@trpc/server"
 
 export const chatRouter = {
   addChat: privateProcedure
     .input(addChatBuildSchema)
     .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx
       const { id, messages } = input
-      const selectedChat = await db.select().from(chat).where(eq(chat.id, id))
+      const selectedChat = await db
+        .select()
+        .from(chat)
+        .where(and(eq(chat.id, id)))
 
       if (selectedChat.length > 0) {
+        if (selectedChat[0]?.authorId !== userId) {
+          throw new TRPCError({ code: "FORBIDDEN" })
+        }
+
         return await db
           .update(chat)
           .set({
@@ -31,11 +40,12 @@ export const chatRouter = {
         id: z.string(),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      const { userId } = ctx
       const [selectedChat] = await db
         .select()
         .from(chat)
-        .where(eq(chat.id, input.id))
+        .where(and(eq(chat.id, input.id), eq(chat.authorId, userId)))
       return selectedChat
     }),
   getChatsByUserId: privateProcedure.query(async ({ ctx }) => {

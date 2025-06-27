@@ -8,6 +8,10 @@ export async function POST(request: Request): Promise<NextResponse> {
     headers: await headers(),
   })
 
+  if (!session) {
+    return NextResponse.json("Unauthorized", { status: 401 })
+  }
+
   const body = (await request.json()) as HandleUploadBody
 
   try {

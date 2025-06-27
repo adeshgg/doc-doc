@@ -12,7 +12,7 @@ export async function DELETE(request: Request) {
   })
 
   if (!session) {
-    return Response.redirect("/login")
+    return new Response("Unauthorized", { status: 401 })
   }
 
   const { user } = session

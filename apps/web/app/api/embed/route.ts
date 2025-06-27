@@ -8,11 +8,11 @@ export async function POST(request: Request) {
     headers: await headers(),
   })
 
-  const body = await request.json()
-
-  if (!session || !session.user || !session.user.email) {
-    throw new Error("Not authenticated")
+  if (!session) {
+    return new Response("Unauthorized", { status: 401 })
   }
+
+  const body = await request.json()
 
   await inngest.send({
     name: "doc/file.embed",

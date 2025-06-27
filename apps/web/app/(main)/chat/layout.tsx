@@ -1,16 +1,27 @@
 import { AppSidebar } from "@/components/app-sidebar"
+import LoginFirst from "@/components/login-first"
+import { auth } from "@workspace/api/auth"
 import { Separator } from "@workspace/ui/components/separator"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@workspace/ui/components/sidebar"
+import { headers } from "next/headers"
 
-export default function ChatLayout({
+export default async function ChatLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
+
+  if (!session) {
+    return <LoginFirst resource="Chat" />
+  }
+
   return (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
