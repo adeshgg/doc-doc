@@ -8,6 +8,15 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
     provider: "pg",
     schema,
   }),
+  user: {
+    additionalFields: {
+      isGuest: {
+        type: "boolean",
+        required: true,
+        defaultValue: false,
+      },
+    },
+  },
   emailAndPassword: {
     enabled: true,
   },

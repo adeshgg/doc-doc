@@ -12,6 +12,7 @@ import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { cn } from "@workspace/ui/lib/utils"
 import { UploadFileDialog } from "@/app/(main)/files/upload-file-dialog"
+import { useSession } from "@workspace/api/auth/client"
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<"div"> {
   table: Table<TData>
@@ -23,6 +24,9 @@ export function DataTableToolbar<TData>({
   className,
   ...props
 }: DataTableToolbarProps<TData>) {
+  const { data } = useSession()
+
+  console.log(data?.user.isGuest)
   const isFiltered = table.getState().columnFilters.length > 0
 
   const columns = React.useMemo(
@@ -64,6 +68,8 @@ export function DataTableToolbar<TData>({
       <div className="flex items-center gap-2">
         {children}
         <DataTableViewOptions table={table} />
+        {/* if guest render fake button, with disable cursor and add tooltip */}
+        {/* {session?.user} */}
         <UploadFileDialog />
       </div>
     </div>
