@@ -22,4 +22,7 @@ export const auth: ReturnType<typeof betterAuth> = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
+  onAPIError: {
+    errorURL: "/login/error",
+  },
 })
