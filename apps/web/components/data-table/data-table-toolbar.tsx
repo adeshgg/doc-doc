@@ -65,11 +65,9 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <div className="flex items-center gap-2">
-        {children}
+      <div className="flex flex-wrap justify-end gap-2">
+        <div className="hidden md:block">{children}</div>
         <DataTableViewOptions table={table} />
-        {/* if guest render fake button, with disable cursor and add tooltip */}
-        {/* {session?.user} */}
         <UploadFileDialog />
       </div>
     </div>
