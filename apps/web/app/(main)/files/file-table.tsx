@@ -5,6 +5,7 @@ import {
   useQueryClient,
   useQuery,
   keepPreviousData,
+  useSuspenseQuery,
 } from "@tanstack/react-query"
 import { Row } from "@tanstack/react-table"
 import { useEffect, useMemo, useRef, useState, useTransition } from "react"
@@ -42,25 +43,24 @@ export function FilesTable() {
   const getFileTypeCountsQueryOptions =
     trpc.file.getFileTypeCounts.queryOptions()
 
-  const { data: filesResponse, isPending: isFilesPending } = useQuery({
+  const { data: filesResponse } = useSuspenseQuery({
     ...getFilesQueryOptions,
-    placeholderData: keepPreviousData,
   })
 
-  const { data: statusCounts } = useQuery(getFileStatusCountsQueryOptions)
-  const { data: typeCounts } = useQuery(getFileTypeCountsQueryOptions)
+  const { data: statusCounts } = useSuspenseQuery(
+    getFileStatusCountsQueryOptions
+  )
+  const { data: typeCounts } = useSuspenseQuery(getFileTypeCountsQueryOptions)
 
   const [rowAction, setRowAction] = useState<DataTableRowAction<File> | null>(
     null
   )
-  const prevFilesDataRef = useRef<File[]>(null)
+  const prevFilesDataRef = useRef<File[] | null>(null)
 
-  const data = filesResponse?.data ?? []
-  const pageCount = filesResponse?.pageCount ?? -1 // Use -1 or 0 as a safe default
+  const data = filesResponse.data
+  const pageCount = filesResponse.pageCount
 
   const columns = useMemo(() => {
-    // Ensure statusCounts and typeCounts are defined before creating columns
-    if (!statusCounts || !typeCounts) return []
     return getFilesTableColumns({
       statusCounts,
       typeCounts,
@@ -80,7 +80,6 @@ export function FilesTable() {
   })
 
   useEffect(() => {
-    if (!filesResponse) return // Guard clause for the initial render
     const oldData = prevFilesDataRef.current
     const newData = filesResponse.data
     if (oldData) {
@@ -115,10 +114,6 @@ export function FilesTable() {
     getFileStatusCountsQueryOptions,
     getFileTypeCountsQueryOptions,
   ])
-
-  if (isFilesPending || !statusCounts || !typeCounts) {
-    return <DataTableSkeleton columnCount={5} filterCount={2} />
-  }
 
   return (
     <div
