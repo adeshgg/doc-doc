@@ -13,8 +13,12 @@ import { ChatList } from "./chat-list"
 import { NavUser } from "./nav-user"
 import NewChat from "./new-chat"
 import { SidebarHead } from "./sidebar-header"
+import { useSession } from "@workspace/api/auth/client"
+import { GuestChatList } from "./guest-chat-list"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data } = useSession()
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -22,7 +26,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NewChat />
-        <ChatList />
+        {data?.user.isGuest ? <GuestChatList /> : <ChatList />}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

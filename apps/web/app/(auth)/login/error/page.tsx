@@ -2,10 +2,6 @@ import { Suspense } from "react"
 import { Stethoscope } from "lucide-react"
 import { ErrorDisplay } from "./display"
 
-function LoadingFallback() {
-  return <div className="text-center">Loading error details...</div>
-}
-
 export default function ErrorPage() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
@@ -20,7 +16,7 @@ export default function ErrorPage() {
           doc-doc.
         </a>
 
-        <Suspense fallback={<LoadingFallback />}>
+        <Suspense>
           <ErrorDisplay />
         </Suspense>
 

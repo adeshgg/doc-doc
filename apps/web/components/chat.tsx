@@ -11,6 +11,7 @@ import { motion } from "motion/react"
 import FileSelector from "./file-selector"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useSession } from "@workspace/api/auth/client"
 
 const suggestedActions = [
   {
@@ -36,12 +37,17 @@ export function Chat({
   const queryClient = useQueryClient()
   const router = useRouter()
 
+  const { data } = useSession()
+
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set())
 
   const { messages, handleSubmit, input, setInput, append, status } = useChat({
     body: { id, selectedFiles: [...selectedFiles] },
     initialMessages,
     onFinish: () => {
+      if (data?.user.isGuest) {
+        return
+      }
       if (initialMessages.length === 0) {
         queryClient.invalidateQueries({
           queryKey: trpc.chat.getChatsByUserId.queryKey(),

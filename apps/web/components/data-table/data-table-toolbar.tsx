@@ -12,6 +12,13 @@ import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { cn } from "@workspace/ui/lib/utils"
 import { UploadFileDialog } from "@/app/(main)/files/upload-file-dialog"
+import { useSession } from "@workspace/api/auth/client"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@workspace/ui/components/tooltip"
+import { toast } from "sonner"
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<"div"> {
   table: Table<TData>
@@ -23,6 +30,8 @@ export function DataTableToolbar<TData>({
   className,
   ...props
 }: DataTableToolbarProps<TData>) {
+  const { data } = useSession()
+
   const isFiltered = table.getState().columnFilters.length > 0
 
   const columns = React.useMemo(
@@ -61,10 +70,30 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <div className="flex items-center gap-2">
-        {children}
+      <div className="flex flex-wrap justify-end gap-2">
+        <div className="hidden md:block">{children}</div>
         <DataTableViewOptions table={table} />
-        <UploadFileDialog />
+        {data?.user.isGuest ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="sm"
+                className="w-fit"
+                onClick={() => {
+                  toast.warning("This feature is not available to guest users")
+                }}
+              >
+                <CloudUpload className="mr-2 size-4" aria-hidden="true" />
+                Upload
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>This feature is not available to guest users</p>
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <UploadFileDialog />
+        )}
       </div>
     </div>
   )

@@ -24,7 +24,10 @@ export async function POST(request: Request) {
       selectedFiles,
     },
     onFinish: async ({ text }) => {
-      console.log("final response from LLM", text)
+      // Save chats only for logged in users
+      if (session.user.isGuest) {
+        return
+      }
       await caller.chat.addChat({
         id,
         messages: [...messages, { role: "assistant", content: text }],

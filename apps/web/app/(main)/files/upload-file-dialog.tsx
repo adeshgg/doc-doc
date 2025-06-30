@@ -33,6 +33,7 @@ import {
   FileUploadList,
   FileUploadTrigger,
 } from "@workspace/ui/components/file-upload"
+import { MAX_FILE_SIZE } from "@/lib/const"
 
 interface UploadFileDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
@@ -144,13 +145,13 @@ export function UploadFileDialog({
             <DialogTitle>Upload File</DialogTitle>
             <DialogDescription>
               Upload a file to the system. Supported formats: PDF, images (PNG,
-              JPG)
+              JPG) Max File Size: {MAX_FILE_SIZE}MB
             </DialogDescription>
           </DialogHeader>
           <div>
             <FileUpload
               maxFiles={1}
-              maxSize={4 * 1024 * 1024} // 4MB
+              maxSize={MAX_FILE_SIZE * 1024 * 1024}
               className="w-full max-w-md"
               value={files}
               onValueChange={setFiles}
@@ -214,18 +215,21 @@ export function UploadFileDialog({
           Upload
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="min-h-[50vh]">
         <DialogHeader>
-          <DialogTitle>Upload File</DialogTitle>
+          <DialogTitle className="mt-8">Upload File</DialogTitle>
           <DialogDescription>
-            Upload a file to the system. Supported formats: PDF, images (PNG,
-            JPG)
+            Upload a file to the system.
+            <div className="mt-2">
+              Supported formats: PDF, images (PNG, JPG)
+            </div>
+            <div className="mt-2">Max File Size: {MAX_FILE_SIZE}MB</div>
           </DialogDescription>
         </DialogHeader>
         <div>
           <FileUpload
             maxFiles={1}
-            maxSize={4 * 1024 * 1024} // 4MB
+            maxSize={MAX_FILE_SIZE * 1024 * 1024}
             className="w-full max-w-md"
             value={files}
             onValueChange={setFiles}
@@ -233,7 +237,7 @@ export function UploadFileDialog({
             disabled={isPending}
             accept="application/pdf, image/*"
           >
-            <FileUploadDropzone className="p-0 border-none w-fit">
+            <FileUploadDropzone className="border-none w-fit mx-auto">
               <FileUploadTrigger asChild>
                 <Button variant="outline" size="sm" disabled={isPending}>
                   Browse file
