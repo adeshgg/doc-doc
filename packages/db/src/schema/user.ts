@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm"
 import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core"
-import { post } from "./post"
 import { chat, chunk } from "./chat"
 import { file } from "./file"
 
@@ -56,7 +55,6 @@ export const verification = pgTable("verification", {
 })
 
 export const userRelations = relations(user, ({ many }) => ({
-  posts: many(post),
   chats: many(chat),
   files: many(file),
   chunks: many(chunk),
