@@ -1,12 +1,9 @@
-import * as React from "react"
-import { Suspense } from "react"
-import { prefetch, HydrateClient, trpc } from "@/trpc/server"
-import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
+import LoginFirst from "@/components/login-first"
 import { SearchParams, searchParamsCache } from "@/lib/types"
-import { FilesTable } from "./file-table"
+import { HydrateClient, prefetch, trpc } from "@/trpc/server"
 import { auth } from "@workspace/api/auth"
 import { headers } from "next/headers"
-import LoginFirst from "@/components/login-first"
+import { FilesTableWrapper } from "./fileWrapper"
 
 interface FilesPageProps {
   searchParams: Promise<SearchParams>
@@ -30,11 +27,7 @@ export default async function FilesPage(props: FilesPageProps) {
 
   return (
     <HydrateClient>
-      <Suspense
-        fallback={<DataTableSkeleton columnCount={5} filterCount={2} />}
-      >
-        <FilesTable />
-      </Suspense>
+      <FilesTableWrapper />
     </HydrateClient>
   )
 }

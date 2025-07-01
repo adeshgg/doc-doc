@@ -1,27 +1,21 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
-import {
-  useQueryClient,
-  useQuery,
-  keepPreviousData,
-  useSuspenseQuery,
-} from "@tanstack/react-query"
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { Row } from "@tanstack/react-table"
+import { useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState, useTransition } from "react"
 
 import { DataTable } from "@/components/data-table/data-table"
-import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DataTableSortList } from "@/components/data-table/data-table-sort-list"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { useDataTable } from "@/hooks/use-data-table" //
+import { useDataTable } from "@/hooks/use-data-table"
 import { searchParamsCache } from "@/lib/types"
 import { useTRPC } from "@/trpc/react"
 import { File } from "@workspace/db/schema"
 import { cn } from "@workspace/ui/lib/utils"
 
-import FileTableActionBar from "./file-table-action-bar"
 import { DeleteFilesDialog } from "./delete-file-dialog"
+import FileTableActionBar from "./file-table-action-bar"
 import { getFilesTableColumns } from "./file-table-column"
 
 export interface DataTableRowAction<TData> {
@@ -45,6 +39,15 @@ export function FilesTable() {
 
   const { data: filesResponse } = useSuspenseQuery({
     ...getFilesQueryOptions,
+    refetchInterval: query => {
+      const files = query.state.data?.data
+      if (!files) return false
+
+      const hasProcessingFiles = files.some(
+        (file: File) => file.status === "processing"
+      )
+      return hasProcessingFiles ? 30000 : false
+    },
   })
 
   const { data: statusCounts } = useSuspenseQuery(

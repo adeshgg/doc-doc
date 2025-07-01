@@ -85,7 +85,9 @@ export function DeleteFilesDialog({
               })
             )
           )
-          toast(`${files.length > 1 ? "Files" : "File"} deleted successfully`)
+          toast.success(
+            `${files.length > 1 ? "Files" : "File"} deleted successfully`
+          )
         },
       }
     )

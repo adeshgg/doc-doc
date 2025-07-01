@@ -92,7 +92,7 @@ export function UploadFileDialog({
 
   // ... onFileReject callback remains the same ...
   const onFileReject = React.useCallback((file: File, message: string) => {
-    toast(message, {
+    toast.warning(message, {
       description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
     })
   }, [])
@@ -122,7 +122,18 @@ export function UploadFileDialog({
         name: file.name,
       })
     } catch (error) {
-      toast.error("Upload failed.", { description: (error as Error).message })
+      if (
+        error instanceof Error &&
+        error.message.includes("blob already exists")
+      ) {
+        toast.error("A file with this name already exists.", {
+          description: "Please rename your file or delete the existing one.",
+        })
+      } else {
+        toast.error("Upload failed.", {
+          description: (error as Error).message,
+        })
+      }
     } finally {
       setIsUploading(false)
     }
