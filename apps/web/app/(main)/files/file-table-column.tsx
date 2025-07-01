@@ -17,28 +17,13 @@ import * as React from "react"
 
 import { Badge } from "@workspace/ui/components/badge"
 import { Checkbox } from "@workspace/ui/components/checkbox"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@workspace/ui/components/tooltip"
+import { getFileStatusIcon, getFileStatusToolTip } from "./utils"
 
-// Helper function to get an icon based on file status
-function getFileStatusIcon(status: File["status"]) {
-  const iconMap = {
-    indexed: CheckCircle,
-    failed: XCircle,
-    processing: CircleDashed,
-  }
-  return iconMap[status] || HelpCircle
-}
-
-// Helper function to get an icon based on file priority
-// function getFilePriorityIcon(priority: File["type"]) {
-//   const iconMap = {
-//     high: ArrowUpIcon, // Assuming ArrowUpIcon is imported from lucide-react
-//     medium: ArrowUpDown,
-//     low: ArrowDownIcon,
-//   };
-//   return iconMap[priority] || HelpCircle;
-// }
-
-// Define the props the column definition function will accept
 interface GetFilesTableColumnsProps {
   statusCounts: Record<File["status"], number>
   typeCounts: Record<File["type"], number>
@@ -116,14 +101,22 @@ export function getFilesTableColumns({
         const status = cell.getValue<File["status"]>()
         if (!status) return null
         const Icon = getFileStatusIcon(status)
+        const toolTip = getFileStatusToolTip(status)
         return (
-          <Badge
-            variant="outline"
-            className="gap-1 py-1 capitalize [&>svg]:size-3.5"
-          >
-            <Icon />
-            <span>{status}</span>
-          </Badge>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge
+                variant="outline"
+                className="gap-1 py-1 capitalize [&>svg]:size-3.5 cursor-pointer"
+              >
+                <Icon />
+                <span>{status}</span>
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{toolTip}</p>
+            </TooltipContent>
+          </Tooltip>
         )
       },
       meta: {
