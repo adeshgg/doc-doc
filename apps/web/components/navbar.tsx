@@ -21,7 +21,7 @@ import { Icons } from "@workspace/ui/components/icons"
 
 const navigationLinks = [
   { href: "/files", label: "Files" },
-  { href: "/chat", label: "Chats" },
+  { href: "/chat", label: "Chat" },
   // { href: "https://github.com", label: "GitHub" },
 ]
 
@@ -42,7 +42,6 @@ export default function Navbar() {
                 variant="ghost"
                 size="icon"
               >
-                {/* SVG for the hamburger/close icon */}
                 <Icons.hamburger />
               </Button>
             </PopoverTrigger>
@@ -68,7 +67,6 @@ export default function Navbar() {
             </PopoverContent>
           </Popover>
 
-          {/* Logo / Branding from original navbar */}
           <Link href="/" className="flex flex-shrink-0 items-center">
             <h1 className="font-space-grotesk scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
               doc-doc.
