@@ -120,7 +120,7 @@ export function FilesTable() {
 
   return (
     <div
-      className={cn("mt-12", isTransitionPending && "opacity-90 animate-pulse")}
+      className={cn("mt-12", isTransitionPending && "animate-pulse opacity-90")}
     >
       <DataTable table={table} actionBar={<FileTableActionBar table={table} />}>
         <DataTableToolbar table={table}>

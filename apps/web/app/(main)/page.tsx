@@ -9,16 +9,16 @@ export default async function Home() {
     <div className="w-full">
       <DotPattern
         className={cn(
-          "hidden md:block [mask-image:radial-gradient(600px_circle_at_center,white,transparent)] opacity-30"
+          "hidden opacity-30 [mask-image:radial-gradient(600px_circle_at_center,white,transparent)] md:block"
         )}
       />
       <div className="container mx-auto">
-        <div className="flex gap-8 py-20 lg:py-40 items-center justify-center flex-col h-[calc(100dvh-4rem)]">
-          <div className="flex gap-4 flex-col">
-            <h1 className="text-5xl md:text-7xl max-w-2xl tracking-tighter text-center font-space-grotesk">
+        <div className="flex h-[calc(100dvh-4rem)] flex-col items-center justify-center gap-8 py-20 lg:py-40">
+          <div className="flex flex-col gap-4">
+            <h1 className="font-space-grotesk max-w-2xl text-center text-5xl tracking-tighter md:text-7xl">
               A Digital Organizer For Medical Reports
             </h1>
-            <p className="text-lg md:text-xl leading-relaxed tracking-tight text-muted-foreground max-w-2xl text-center">
+            <p className="text-muted-foreground max-w-2xl text-center text-lg leading-relaxed tracking-tight md:text-xl">
               Focus on healing. We handle the paperwork. Your doctor gets the
               clear, organized medical history they need to best care for you.
             </p>
@@ -31,7 +31,7 @@ export default async function Home() {
             </Button>
             <Button size="lg" className="gap-4" asChild>
               <Link href={"/chat"}>
-                Chat <MessageCircle className="w-4 h-4" />
+                Chat <MessageCircle className="h-4 w-4" />
               </Link>
             </Button>
           </div>

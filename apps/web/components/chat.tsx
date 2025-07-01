@@ -64,7 +64,7 @@ export function Chat({
     <div className="w-full pb-40">
       <div
         ref={messagesContainerRef}
-        className="flex flex-col gap-4 w-full items-center pt-4"
+        className="flex w-full flex-col items-center gap-4 pt-4"
       >
         {messages.map((message, index) => (
           <PreviewMessage
@@ -74,19 +74,19 @@ export function Chat({
           />
         ))}
         {status === "submitted" && (
-          <div className="flex flex-row gap-4 px-4 ml-20 w-full md:w-[500px] md:px-0">
+          <div className="ml-20 flex w-full flex-row gap-4 px-4 md:w-[500px] md:px-0">
             <TextShimmer className="font-mono text-sm" duration={1.8}>
               Generating response...
             </TextShimmer>
           </div>
         )}
-        <div ref={messagesEndRef} className="flex-shrink-0 min-h-[1px]" />
+        <div ref={messagesEndRef} className="min-h-[1px] flex-shrink-0" />
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 flex justify-center border-t border-zinc-200 dark:border-zinc-800 bg-clip-padding backdrop-filter backdrop-blur bg-opacity-10 backdrop-saturate-100 backdrop-contrast-100">
-        <div className="p-4 w-full md:max-w-[500px]">
+      <div className="fixed bottom-0 left-0 right-0 flex justify-center border-t border-zinc-200 bg-opacity-10 bg-clip-padding backdrop-blur backdrop-contrast-100 backdrop-saturate-100 backdrop-filter dark:border-zinc-800">
+        <div className="w-full p-4 md:max-w-[500px]">
           {messages.length === 0 && (
-            <div className="grid sm:grid-cols-2 gap-2 w-full mx-auto mb-3">
+            <div className="mx-auto mb-3 grid w-full gap-2 sm:grid-cols-2">
               {suggestedActions.map((suggestedAction, index) => (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -102,7 +102,7 @@ export function Chat({
                         content: suggestedAction.action,
                       })
                     }}
-                    className="w-full text-left border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-300 rounded-lg p-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors flex flex-col"
+                    className="flex w-full flex-col rounded-lg border border-zinc-200 p-2 text-left text-sm text-zinc-800 transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-800"
                   >
                     <span className="font-medium">{suggestedAction.title}</span>
                     <span className="text-zinc-500 dark:text-zinc-400">
@@ -115,11 +115,11 @@ export function Chat({
           )}
 
           <form
-            className="flex flex-row gap-2 relative items-center w-full"
+            className="relative flex w-full flex-row items-center gap-2"
             onSubmit={handleSubmit}
           >
             <input
-              className="bg-zinc-100 rounded-md px-2 py-1.5 flex-1 outline-none dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300"
+              className="flex-1 rounded-md bg-zinc-100 px-2 py-1.5 text-zinc-800 outline-none dark:bg-zinc-700 dark:text-zinc-300"
               placeholder="Send a message..."
               value={input}
               onChange={event => {

@@ -170,7 +170,7 @@ export function UploadFileDialog({
               disabled={isPending}
               accept="application/pdf, image/*"
             >
-              <FileUploadDropzone className="p-0 border-none w-fit">
+              <FileUploadDropzone className="w-fit border-none p-0">
                 <FileUploadTrigger asChild>
                   <Button variant="outline" size="sm" disabled={isPending}>
                     Browse file
@@ -248,7 +248,7 @@ export function UploadFileDialog({
             disabled={isPending}
             accept="application/pdf, image/*"
           >
-            <FileUploadDropzone className="border-none w-fit mx-auto">
+            <FileUploadDropzone className="mx-auto w-fit border-none">
               <FileUploadTrigger asChild>
                 <Button variant="outline" size="sm" disabled={isPending}>
                   Browse file

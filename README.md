@@ -36,7 +36,7 @@ import { Button } from "@workspace/ui/components/button"
 
 ### Roadmap
 
-- [X] Add trpc
+- [x] Add trpc
 - [ ] Add drizzle postgres
 - [ ] Add redis for queue or use ingest
 

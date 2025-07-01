@@ -8,9 +8,9 @@ export default function LoginPage() {
       <div className="flex w-full max-w-sm flex-col gap-6">
         <a
           href="/"
-          className="flex font-space-grotesk items-center gap-2 self-center font-medium"
+          className="font-space-grotesk flex items-center gap-2 self-center font-medium"
         >
-          <div className="bg-blue-600 text-white flex aspect-square size-8 items-center justify-center rounded-lg">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-blue-600 text-white">
             <Stethoscope className="size-4 stroke-[2.5px]" />
           </div>
           doc-doc.

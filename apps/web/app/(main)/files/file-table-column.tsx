@@ -107,7 +107,7 @@ export function getFilesTableColumns({
             <TooltipTrigger asChild>
               <Badge
                 variant="outline"
-                className="gap-1 py-1 capitalize [&>svg]:size-3.5 cursor-pointer"
+                className="cursor-pointer gap-1 py-1 capitalize [&>svg]:size-3.5"
               >
                 <Icon />
                 <span>{status}</span>

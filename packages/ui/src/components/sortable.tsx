@@ -425,7 +425,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
           ref={composedRef}
           style={composedStyle}
           className={cn(
-            "focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1",
+            "focus-visible:outline-hidden focus-visible:ring-ring focus-visible:ring-1 focus-visible:ring-offset-1",
             {
               "touch-none select-none": asHandle,
               "cursor-default": context.flatCursor,
@@ -481,7 +481,7 @@ const SortableItemHandle = React.forwardRef<
         "select-none disabled:pointer-events-none disabled:opacity-50",
         context.flatCursor
           ? "cursor-default"
-          : "cursor-grab data-dragging:cursor-grabbing",
+          : "data-dragging:cursor-grabbing cursor-grab",
         className
       )}
       disabled={isDisabled}

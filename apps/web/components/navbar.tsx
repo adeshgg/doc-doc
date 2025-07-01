@@ -51,7 +51,7 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                    className="hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-2 text-sm font-medium"
                     // Add target="_blank" for external links like GitHub
                     target={link.href.startsWith("http") ? "_blank" : undefined}
                     rel={

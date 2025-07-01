@@ -83,7 +83,7 @@ export function DataTableFacetedFilter<TData, TValue>({
               aria-label={`Clear ${title} filter`}
               tabIndex={0}
               onClick={onReset}
-              className="rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="focus-visible:ring-ring rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-1"
             >
               <XCircle />
             </div>
@@ -145,7 +145,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                   >
                     <div
                       className={cn(
-                        "flex size-4 items-center justify-center rounded-sm border border-primary",
+                        "border-primary flex size-4 items-center justify-center rounded-sm border",
                         isSelected
                           ? "bg-primary"
                           : "opacity-50 [&_svg]:invisible"
@@ -160,7 +160,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                         {option.count}
                       </span>
                     ) : (
-                      <span className="ml-auto text-xs font-mono">0</span>
+                      <span className="ml-auto font-mono text-xs">0</span>
                     )}
                   </CommandItem>
                 )

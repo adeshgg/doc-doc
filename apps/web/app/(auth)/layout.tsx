@@ -3,7 +3,7 @@ import React from "react"
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <MaxWidthWrapper className="flex justify-center h-screen items-center">
+    <MaxWidthWrapper className="flex h-screen items-center justify-center">
       {children}
     </MaxWidthWrapper>
   )
