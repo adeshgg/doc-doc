@@ -24,7 +24,7 @@ export default function NewChat() {
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip={"New Chat"}
-              className="bg-primary cursor-pointer text-primary-foreground shadow-xs hover:bg-primary/90 hover:text-primary-foreground/90"
+              className="bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 hover:text-primary-foreground/90 cursor-pointer"
               asChild
             >
               <Link href={"/chat"}>

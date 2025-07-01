@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${fontSans.variable} ${fontMono.variable} ${spaceGrotesk.variable} font-sans antialiased `}
+        className={`${fontSans.variable} ${fontMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}
       >
         <Providers>
           <TRPCReactProvider>{children}</TRPCReactProvider>

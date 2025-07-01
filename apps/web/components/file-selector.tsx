@@ -144,7 +144,7 @@ const FileSelector = ({
     <Dialog>
       <DialogTrigger asChild>
         <Button variant={"secondary"} className="relative">
-          <div className="absolute top-0 right-0 flex h-6 w-6 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-sm font-bold text-white dark:border-zinc-900">
+          <div className="absolute right-0 top-0 flex h-6 w-6 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-sm font-bold text-white dark:border-zinc-900">
             {selectedFiles.size}
           </div>
           <FileText aria-label="Select Files" />
@@ -180,7 +180,7 @@ const FileSelector = ({
             >
               All Files
             </label>
-            <span className="rounded px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+            <span className="rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
               {selectedFiles.size}/{allIds.length} selected
             </span>
           </div>
@@ -216,7 +216,7 @@ const FileSelector = ({
                     </label>
                   </div>
 
-                  <div className="ml-8 space-y-2 rounded-lg border p-3 bg-zinc-50 border-zinc-200 dark:bg-zinc-800/30 dark:border-zinc-700/50">
+                  <div className="ml-8 space-y-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700/50 dark:bg-zinc-800/30">
                     {files.map(file => (
                       <div
                         key={file.id}
@@ -230,7 +230,7 @@ const FileSelector = ({
                         />
                         <label
                           htmlFor={`file-${file.id}`}
-                          className="truncate cursor-pointer font-medium text-zinc-600 dark:text-zinc-300"
+                          className="cursor-pointer truncate font-medium text-zinc-600 dark:text-zinc-300"
                           title={file.name}
                         >
                           {file.name}

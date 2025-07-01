@@ -42,7 +42,7 @@ export function ErrorDisplay() {
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-center text-sm">
             Something went wrong during authentication. Please try again or
             contact support if the problem persists.
           </p>
