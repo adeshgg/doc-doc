@@ -3,15 +3,22 @@ import { generateText, LanguageModelV1 } from "ai"
 import { PdfReader } from "pdfreader"
 
 const systemPrompt =
+  `For the image given you need to perform a two step action:` +
+  `1. Figure out if the image is medical scan (X-ray, CT scan, ...)` +
+  `Or if it a image of a document (prescription, bill, ...)` +
+  `2.1. If it is an image of a document then` +
   `Extract the text out of this image` +
-  `Make sure to capute all the details` +
+  `Make sure to capture all the details` +
   `Format the result a readable text` +
-  `Just return the extracted text, no extra message`
+  `Just return the extracted text, no extra message` +
+  `2.2 If the image is a medical scan then` +
+  `Consider yourself as a medical expert assistant` +
+  `describe this image in as much detail as possible` +
+  `You can use medical jargon. Perform an indepth assessment of the medical image` +
+  `Make it as useful for your medical expert as possible`
 
 export async function getImageTextFromUrlUsingLLM(url: string) {
-  console.log("url", url)
   const imageUrl = url.split("?")[0]
-  console.log(imageUrl)
   const { text } = await generateText({
     model: modelWithStructuredOutputs as LanguageModelV1,
     system: systemPrompt,
@@ -27,9 +34,6 @@ export async function getImageTextFromUrlUsingLLM(url: string) {
       },
     ],
   })
-
-  console.log(text)
-
   return text
 }
 

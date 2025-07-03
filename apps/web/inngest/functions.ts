@@ -43,7 +43,6 @@ export const fileEmbed = inngest.createFunction(
       if (url.endsWith(".pdf")) {
         return await getPdfContentFromUrl(url)
       } else {
-        // Assuming any other URL is an image
         return await getImageTextFromUrlUsingLLM(url)
       }
     })
