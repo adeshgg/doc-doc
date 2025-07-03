@@ -1,17 +1,15 @@
 "use client"
 
-import type { DataTableRowAction } from "@/types/data-table" // You'll need to define this type
+import type { DataTableRowAction } from "@/types/data-table"
 import type { CheckedState } from "@radix-ui/react-checkbox"
 import type { ColumnDef } from "@tanstack/react-table"
 import type { File } from "@workspace/db/schema"
 import { FILE_STATUS, FILE_TYPE_VALUES } from "@workspace/db/schema"
 import {
   ArrowUpDown,
-  CheckCircle,
   CircleDashed,
-  HelpCircle,
+  ExternalLink,
   Paperclip,
-  XCircle,
 } from "lucide-react"
 import * as React from "react"
 
@@ -22,6 +20,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@workspace/ui/components/tooltip"
+import Link from "next/link"
 import { getFileStatusIcon, getFileStatusToolTip } from "./utils"
 
 interface GetFilesTableColumnsProps {
@@ -38,7 +37,6 @@ export function getFilesTableColumns({
   setRowAction,
 }: GetFilesTableColumnsProps): ColumnDef<File>[] {
   return [
-    // Column 1: Select Checkbox
     {
       id: "select",
       header: ({ table }) => (
@@ -66,7 +64,6 @@ export function getFilesTableColumns({
       enableHiding: false,
       size: 40,
     },
-    // Column 2: File Name
     {
       id: "name",
       accessorKey: "name",
@@ -76,9 +73,11 @@ export function getFilesTableColumns({
       ),
       cell: ({ row }) => {
         return (
-          <div className="max-w-[20rem] truncate font-medium">
-            {row.getValue("name")}
-          </div>
+          <Link href={row.original.url} target="_blank">
+            <div className="flex max-w-[20rem] cursor-pointer gap-2 truncate font-medium hover:underline">
+              {row.getValue("name")} <ExternalLink className="h-4 w-4" />
+            </div>
+          </Link>
         )
       },
       meta: {
@@ -89,7 +88,6 @@ export function getFilesTableColumns({
       },
       enableColumnFilter: true,
     },
-    // Column 3: Status
     {
       id: "status",
       accessorKey: "status",
@@ -132,7 +130,6 @@ export function getFilesTableColumns({
       },
       enableColumnFilter: true,
     },
-    // Column 4: Type
     {
       id: "type",
       accessorKey: "type",
@@ -167,7 +164,6 @@ export function getFilesTableColumns({
       },
       enableColumnFilter: true,
     },
-    // Column 5: Created At
     {
       id: "createdAt",
       accessorKey: "createdAt",
@@ -183,7 +179,6 @@ export function getFilesTableColumns({
       //   },
       //   enableColumnFilter: true,
     },
-    // Column 6: Actions
     // {
     //   id: "actions",
     //   cell: ({ row }) => (
