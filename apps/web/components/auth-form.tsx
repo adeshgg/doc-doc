@@ -16,10 +16,19 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
+type LoginFormProps = React.ComponentProps<"div"> & {
+  isUnauthorized?: boolean
+  redirectTo?: string
+  resource?: string
+}
+
 export function LoginForm({
   className,
+  isUnauthorized = false,
+  redirectTo = "/",
+  resource = "this resource",
   ...props
-}: React.ComponentProps<"div">) {
+}: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
@@ -35,7 +44,8 @@ export function LoginForm({
         },
         onSuccess: () => {
           setIsLoading(false)
-          router.push("/")
+          router.push(redirectTo)
+          router.refresh()
         },
         onError: () => {
           setIsLoading(false)
@@ -49,9 +59,17 @@ export function LoginForm({
   }
 
   async function handleSocialSignIn(provider: "google" | "github") {
-    const { error } = await signIn.social({
-      provider,
-    })
+    const { error } = await signIn.social(
+      {
+        provider,
+      },
+      {
+        onSuccess: () => {
+          router.push(redirectTo)
+          router.refresh()
+        },
+      }
+    )
 
     if (error && error.message) {
       toast.error(error.message)
@@ -62,7 +80,11 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
+          <CardTitle className="text-xl">
+            {isUnauthorized
+              ? `Please Login to access ${resource}`
+              : "Welcome back"}
+          </CardTitle>
           <CardDescription>
             Login with your Github or Google account
           </CardDescription>

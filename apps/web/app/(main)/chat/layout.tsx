@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar"
-import LoginFirst from "@/components/login-first"
+import { LoginForm } from "@/components/auth-form"
 import { auth } from "@workspace/api/auth"
 import { Separator } from "@workspace/ui/components/separator"
 import {
@@ -19,7 +19,13 @@ export default async function ChatLayout({
   })
 
   if (!session) {
-    return <LoginFirst resource="Chat" />
+    return (
+      <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+        <div className="flex w-full max-w-sm flex-col gap-6">
+          <LoginForm isUnauthorized redirectTo="chat" resource="Chat" />
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -1,22 +1,16 @@
-// packages/api/tsconfig.json
 {
   "extends": "@workspace/typescript-config/base.json",
   "compilerOptions": {
-    "composite": true, // <--- Add this
+    "composite": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
-      "@workspace/api/*": ["./src/*"] // For internal paths, this is fine
-      // "@workspace/db/*": ["../../packages/db/src/*"] // <<<--- REMOVE THIS LINE
+      "@workspace/api/*": ["./src/*"]
     }
-    // "noEmit": false is inherited from base.json, which is correct
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"],
-  "references": [
-    // <--- Add this whole section
-    { "path": "../db" } // Path to the @workspace/db package directory
-  ]
+  "references": [{ "path": "../db" }]
 }
