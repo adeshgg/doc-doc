@@ -1,110 +1,126 @@
-# shadcn/ui monorepo template
+# doc-doc.
 
-This template is for creating a monorepo with shadcn/ui.
+doc-doc is a powerful, open-source platform designed to bring all your medical information together in one place.
 
-## Setup
+![doc-doc.](/apps/web/public/og.png)
 
-```bash
-pnpm dlx shadcn@canary init
+**How does it help you?**
+
+- **If you're a patient:** It brings all your medical records—from every doctor and lab—into a single, organized timeline. Your entire health history, always with you.
+- **If you're a doctor:** It saves you critical time by presenting a smart summary of a patient's records the moment you need it.
+
+**The most powerful part?** Both patients and doctors can chat with the records to find specific information instantly. Need to know the date of the last blood test or a specific dosage? Just ask.
+
+**doc-doc: All your medical data, organized and instantly searchable.**
+
+Read [The launch article](https://www.adeshgg.in/blog/doc-doc) for know more about how and why this was build
+
+⭐ Please star this repo if you find it useful!
+
+## Tech?
+
+- [Turborepo](https://turborepo.com/)
+- [Next.js](https://nextjs.org/)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [tRPC](https://trpc.io/)
+- [TanStack Query](https://tanstack.com/query/latest)
+- [Better Auth](https://better-auth.vercel.app/)
+- [Vercel Blob](https://vercel.com/docs/storage/vercel-blob)
+- [Inngest](https://www.inngest.com/)
+- [TanStack Table](https://tanstack.com/table/latest)
+- [Drizzle ORM](https://orm.drizzle.team/)
+- [Neon](https://neon.tech/)
+- [Motion](https://motion.dev/)
+- [Vercel AI SDK](https://sdk.vercel.ai/docs)
+- [LangChain](https://www.langchain.com/)
+- [Zod](https://zod.dev/)
+
+## Setting up locally
+
+### Fork this repo
+
+You can fork this repo by clicking the fork button in the top right corner of this page.
+
+### Clone on your local machine
+
+```shell
+git clone https://github.com/your-username/doc-doc.git
 ```
 
-This would give a framework not recognized error.
-The workaround it to create a `.next.config.ts` file, and then run the command.
-After the new project is generated you can delete the mock config file.
+### Create a new Branch
 
-## Adding components
-
-To add components to your app, run the following command at the root of your `web` app:
-
-```bash
-pnpm dlx shadcn@canary add input
+```shell
+git checkout -b my-new-branch
 ```
 
-This will place the ui components in the `packages/ui/src/components` directory.
+### Install dependencies
 
-## Tailwind
-
-Your `tailwind.config.ts` and `globals.css` are already set up to use the components from the `ui` package.
-
-## Using components
-
-To use the components in your app, import them from the `ui` package.
-
-```tsx
-import { Button } from "@workspace/ui/components/button"
+```shell
+pnpm install
 ```
 
-### Roadmap
+### Set Up Environment Variables
 
-- [x] Add trpc
-- [ ] Add drizzle postgres
-- [ ] Add redis for queue or use ingest
+Copy the sample environment files and configure them:
 
-### Docs use UI
-
-Updated docs app to use the UI package.
-
-Key changes in `layout.tsx`, `components.json`, `eslint.config.mjs`, `next.config.ts`, `package.json` and `tsconfig.json`.
-
-### Got DB, API, auth to work
-
-Here are the issues that I ran into:
-
-1. Package pg can't be external
-
-Solution: add the following to the `.npmrc` file
-
-`public-hoist-pattern[]=*pg*`
-
-2. `./node_modules/.pnpm/pg@8.14.1/node_modules/pg/lib/connection-parameters.js:3:11
-Module not found: Can't resolve 'dns'`
-
-Similar error for `tls`, `net`, `fs`
-
-Reason: The `db` package was getting used in a client component, hence its dependencies were added to the client bundle. And since these are node specific packages, it did not work in the browser environment.
-
-After debugging I found that the auth export from `api` package, was export both
-signIn, signOut, ... methods (client-side methods) and the `auth` object which uses the db from the same export. Creating a separate export path for each solved this issue.
-
-```json
-"exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
-    },
-    "./auth": {
-      "types": "./dist/auth/index.d.ts",
-      "default": "./src/auth/index.ts"
-    },
-    "./auth/client": {
-      "types": "./dist/auth/auth-client.d.ts",
-      "default": "./src/auth/auth-client.ts"
-    }
-  },
+```shell
+cp apps/web/.env.sample apps/web/.env
+cp packages/api/.env.sample packages/api/.env
+cp packages/db/.env.sample packages/db/.env
 ```
 
-3. Error: Cannot find module './user.js'
+Add your secret keys in the `.env` files
 
-While generating migrations, reason we are importing js files. Need to import tsx files
+### Spin Up your database
 
-Solution Update the package.json:
-
-```json
-    "db:generate": "NODE_OPTIONS='--import tsx' drizzle-kit generate",
-    "db:migrate": "NODE_OPTIONS='--import tsx' drizzle-kit migrate"
-```
-
-And run `pnpm run db:generate`
-
-Tip: If there is an error of incorrect migration, delete the migration folder (drizzle in our case). And generate the migration again.
-
-**Updated Base `tsconfig` to use `bundler`**
-
-Now using `bundler` for `moduleResolution`
-Now we can use module imports instead of the .js imports
-
-## To run the database
+Run the docker image
 
 ```shell
 docker compose up -d
+```
+
+Alternatively, if you prefer not to use Docker, you can set up and run a new database instance of your choice. Remember to update the DATABASE_URL in your .env files accordingly to reflect your new database configuration.
+
+### Apply changes to the database
+
+Navigate to the `db` package
+
+```shell
+cd packages/db
+```
+
+Generate migrations
+
+```shell
+pnpm db:generate
+```
+
+Apply migrations
+
+```shell
+pnpm db:migrate
+```
+
+That's it! This should setup your local environment.
+
+### Build the project
+
+To verify you don't have any error, build the project
+
+Make sure to be on the root of the project
+
+```shell
+turbo run build
+```
+
+### Run the project locally
+
+```shell
+pnpm run dev
+```
+
+To run a specific package say api:
+
+```shell
+pnpm --filter @workspace/api dev
 ```
