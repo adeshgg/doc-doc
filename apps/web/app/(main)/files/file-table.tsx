@@ -1,6 +1,10 @@
 "use client"
 
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
+import {
+  useQueryClient,
+  useSuspenseQueries,
+  useSuspenseQuery,
+} from "@tanstack/react-query"
 import { Row } from "@tanstack/react-table"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState, useTransition } from "react"
@@ -50,10 +54,13 @@ export function FilesTable() {
     },
   })
 
-  const { data: statusCounts } = useSuspenseQuery(
-    getFileStatusCountsQueryOptions
-  )
-  const { data: typeCounts } = useSuspenseQuery(getFileTypeCountsQueryOptions)
+  // Run these in parallel
+  const [{ data: statusCounts }, { data: typeCounts }] = useSuspenseQueries({
+    queries: [
+      getFileStatusCountsQueryOptions,
+      getFileTypeCountsQueryOptions,
+    ] as const,
+  })
 
   const [rowAction, setRowAction] = useState<DataTableRowAction<File> | null>(
     null
