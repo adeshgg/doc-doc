@@ -23,6 +23,7 @@ import {
   useSidebar,
 } from "@workspace/ui/components/sidebar"
 import { useRouter } from "next/navigation"
+import { getInitials } from "@workspace/ui/lib/utils"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -42,7 +43,9 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={data?.user.image!} alt={data?.user.name} />
-                <AvatarFallback className="rounded-lg">AG</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {getInitials(data?.user.name ?? "")}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{data?.user.name}</span>
@@ -61,7 +64,9 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={data?.user.image!} alt={data?.user.name} />
-                  <AvatarFallback className="rounded-lg">AG</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {getInitials(data?.user.name ?? "")}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">

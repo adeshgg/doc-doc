@@ -18,6 +18,21 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ModeToggle } from "./mode-toggle"
 import { Icons } from "@workspace/ui/components/icons"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@workspace/ui/components/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu"
+import { LogOut } from "lucide-react"
+import { getInitials } from "@workspace/ui/lib/utils"
 
 const navigationLinks = [
   { href: "/files", label: "Files" },
@@ -106,20 +121,64 @@ export default function Navbar() {
           {isPending ? (
             <Skeleton className="h-10 w-20" />
           ) : session?.user ? (
-            <Button
-              className="cursor-pointer"
-              onClick={async () =>
-                await signOut({
-                  fetchOptions: {
-                    onSuccess: () => {
-                      router.push("/login")
-                    },
-                  },
-                })
-              }
-            >
-              Logout
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild className="cursor-pointer">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                  <Avatar className="h-9 w-9 rounded-md">
+                    <AvatarImage
+                      src={session.user.image!}
+                      alt={session.user.name}
+                    />
+                    <AvatarFallback className="rounded-lg">
+                      {getInitials(session.user.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                align="end"
+                sideOffset={4}
+              >
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarImage
+                        src={session.user.image!}
+                        alt={session.user.name}
+                      />
+                      <AvatarFallback className="rounded-lg">
+                        {getInitials(session.user.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-medium">
+                        {session.user.name}
+                      </span>
+                      <span className="truncate text-xs">
+                        {session.user.email}
+                      </span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={async () =>
+                    await signOut({
+                      fetchOptions: {
+                        onSuccess: () => {
+                          router.push("/login")
+                        },
+                      },
+                    })
+                  }
+                >
+                  <LogOut />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Button asChild>
               <Link href="/login">Login</Link>
