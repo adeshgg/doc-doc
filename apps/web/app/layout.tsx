@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "@/trpc/react"
 import { Toaster } from "sonner"
 import { siteConfig } from "@/lib/const"
 import { Metadata } from "next"
+import { Analytics } from "@vercel/analytics/next"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -92,6 +93,7 @@ export default function RootLayout({
         <Providers>
           <TRPCReactProvider>{children}</TRPCReactProvider>
           <Toaster richColors />
+          <Analytics />
         </Providers>
       </body>
     </html>
