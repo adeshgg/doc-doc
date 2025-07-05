@@ -53,7 +53,7 @@ export function Chat({
           queryKey: trpc.chat.getChatsByUserId.queryKey(),
         })
       }
-      router.replace(`/chat/${id}`)
+      window.history.replaceState(null, "", `/chat/${id}`)
     },
   })
 
