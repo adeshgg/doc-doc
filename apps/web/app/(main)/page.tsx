@@ -18,11 +18,16 @@ export default async function Home() {
           <div className="flex flex-col items-center justify-center gap-4">
             <div className="bg-muted group cursor-pointer rounded-full">
               <Link
-                href={"https://www.adeshgg.in/blog/doc-doc"}
+                href={"https://peerlist.io/adeshgg/project/docdoc"}
                 target="_blank"
               >
                 <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-200">
-                  <span>✨ Read the annoucement blog</span>
+                  <div className="relative mr-2 flex items-center justify-center">
+                    <div className="absolute h-4 w-4 animate-ping rounded-full bg-green-500 opacity-40 dark:bg-green-400"></div>
+                    <div className="absolute h-3 w-3 animate-pulse rounded-full bg-green-500 opacity-60 dark:bg-green-400"></div>
+                    <div className="relative h-2 w-2 rounded-full bg-green-500 shadow-sm dark:bg-green-400"></div>
+                  </div>
+                  <span>Live on Peerlist launchpad!</span>
                   <ExternalLink className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
                 </AnimatedShinyText>
               </Link>
