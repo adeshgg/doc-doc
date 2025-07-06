@@ -37,7 +37,7 @@ import { getInitials } from "@workspace/ui/lib/utils"
 const navigationLinks = [
   { href: "/files", label: "Files" },
   { href: "/chat", label: "Chat" },
-  // { href: "https://github.com", label: "GitHub" },
+  { href: "https://github.com/adeshgg/doc-doc", label: "GitHub" },
 ]
 
 export default function Navbar() {
