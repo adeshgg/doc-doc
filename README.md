@@ -17,6 +17,18 @@ Read [the launch article](https://www.adeshgg.in/blog/doc-doc) for know more abo
 
 ⭐ Please star this repo if you find it useful!
 
+## Key Features
+
+- **Effortless Upload**: Simply add your medical files, whether they are PDF reports, images of prescriptions, or scans like X-rays.
+
+- **Automatic Organization**: Our AI instantly sorts everything for you into clear, simple categories like Prescriptions, Reports, Scans, and Billing.
+
+- **Find Files in a Flash**: Quickly find any document you need. Just filter by a category to see all related files in one place.
+
+- **Get Clear Answers**: Ask questions about your health in plain English (e.g., "What did my last blood test say?") and get easy-to-understand answers sourced directly from your records.
+
+- **Track Your Conversations**: All your questions and the AI's insights are saved, so you can easily look back at your health journey.
+
 ## Tech?
 
 - [Turborepo](https://turborepo.com/)
