@@ -1,9 +1,9 @@
 import { google } from "@ai-sdk/google"
 import { EmbeddingModel } from "ai"
 
-export const model = google("gemini-2.0-flash-001")
+export const model = google("gemini-2.5-flash-lite")
 
-export const modelWithStructuredOutputs = google("gemini-2.0-flash-001", {
+export const modelWithStructuredOutputs = google("gemini-2.5-flash-lite", {
   structuredOutputs: true,
 })
 
