@@ -13,10 +13,6 @@ doc-doc is a powerful, open-source platform designed to bring all your medical i
 
 **doc-doc: All your medical data, organized and instantly searchable.**
 
-Read [the launch article](https://www.adeshgg.in/blog/doc-doc) for know more about how and why this was build.
-
-⭐ Please star this repo if you find it useful!
-
 ## Key Features
 
 - **Effortless Upload**: Simply add your medical files, whether they are PDF reports, images of prescriptions, or scans like X-rays.
